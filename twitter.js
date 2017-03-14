@@ -8,7 +8,7 @@ var T = new Twit({
   access_token_secret: keys.access_secret
 });
 
-function search (query, cb) {
+module.exports.search = function (query, cb) {
   T.get('search/tweets', {q: query},
     function (err, data, response) {
       if (err) console.error(err);
@@ -18,4 +18,4 @@ function search (query, cb) {
       }
       cb(data);
     });
-}
+};

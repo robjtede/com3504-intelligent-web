@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start:dev": "NODE_ENV=development yarn && node app.js",
-    "start": "NODE_ENV=production yarn && node app.js",
+    "start": "NODE_ENV=production yarn && node app.js"
   },
   "dependencies": {
     "express": "^4.15.2",

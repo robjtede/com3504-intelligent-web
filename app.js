@@ -13,7 +13,7 @@ app.get('/', function (req, res) {
   twitter.search('#football', function (data) {
     res.render('index', {
       title: 'COM3504',
-      tweets: data
+      tweets: data.statuses
     });
   });
 });
