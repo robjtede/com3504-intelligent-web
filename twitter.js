@@ -13,10 +13,6 @@ module.exports.search = function (query, cb) {
   T.get('search/tweets', {q: query, count: 500},
     function (err, data, response) {
       if (err) console.error(err);
-      for (var index in data.statuses) {
-        var tweet = data.statuses[index];
-        console.log('on: ' + tweet.created_at + ' : @' + tweet.user.screen_name + ' : ' + tweet.text + '\n\n');
-      }
       cb(data);
     });
 };

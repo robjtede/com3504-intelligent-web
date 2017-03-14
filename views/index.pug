@@ -3,8 +3,14 @@ html
 
   body
     h1= title
-    p= 'Number of tweets: ' + tweets.length
-    for tweet in tweets
-      p= tweet.created_at
-      p= tweet.user.screen_name
-      p= tweet.text
+
+    form#searchForm
+      input(type='text' name='query' value='Search...')
+      button#submitSearchForm Submit
+
+    if tweets
+      p= 'Number of tweets: ' + tweets.length
+      for tweet in tweets
+        div.tweet
+          p= tweet.created_at + tweet.user.screen_name
+          p= tweet.text
