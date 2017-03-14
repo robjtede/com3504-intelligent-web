@@ -1,0 +1,14 @@
+{
+  "db": {
+    "host": "...",
+    "user": "...",
+    "pass": "...",
+    "name": "..."
+  },
+  "twitter": {
+    "api_key": "...",
+    "api_secret": "...",
+    "access_key": "...",
+    "access_secret": "..."
+  }
+}
