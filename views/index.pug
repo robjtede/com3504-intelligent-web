@@ -3,6 +3,7 @@ html
 
   body
     h1= title
+    p= 'Number of tweets: ' + tweets.length
     for tweet in tweets
       p= tweet.created_at
       p= tweet.user.screen_name
