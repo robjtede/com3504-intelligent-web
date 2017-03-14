@@ -5,6 +5,10 @@
   "repository": "git@github.com:robjtede/com3504-intelligent-web.git",
   "author": "",
   "license": "MIT",
+  "scripts": {
+    "start:dev": "NODE_ENV=development yarn && node app.js",
+    "start": "NODE_ENV=production yarn && node app.js",
+  },
   "dependencies": {
     "express": "^4.15.2",
     "mysql": "^2.13.0",
