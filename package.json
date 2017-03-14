@@ -1,0 +1,11 @@
+{
+  "name": "com3504-intelligent-web",
+  "version": "0.0.1",
+  "main": "app.js",
+  "repository": "git@github.com:robjtede/com3504-intelligent-web.git",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
