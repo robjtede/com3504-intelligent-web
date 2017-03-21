@@ -1,18 +1,15 @@
-html
-  head
-    style(href="/style/normalize.css")
-    style(href="/style/style.css")
+extends layout
 
-  body
-    h1= title
+block main
+  h1= title
 
-    form#searchForm
-      input(type='text' name='query' placeholder='Search...' )
-      button#submitSearchForm Submit
+  form#searchForm
+    input(type='text' name='query' placeholder='Search...' )
+    button#submitSearchForm Submit
 
-    if tweets
-      p= 'Number of tweets: ' + tweets.length
-      for tweet in tweets
-        div.tweet
-          p= tweet.created_at + tweet.user.screen_name
-          p= tweet.text
+  if tweets
+    p= 'Number of tweets: ' + tweets.length
+    for tweet in tweets
+      div.tweet
+        p= tweet.created_at + tweet.user.screen_name
+        p= tweet.text
