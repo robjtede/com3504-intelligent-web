@@ -4,10 +4,10 @@ USE com3504assignment;
 
 DROP TABLE IF EXISTS `tweets`;
 CREATE TABLE `tweets` (
-  `Tweet_ID` INT(11) NOT NULL,
+  `Tweet_ID` BIGINT(20) NOT NULL,
   `Author` VARCHAR(255) NOT NULL,
-  `Datetime` DATE NOT NULL,
-  `Content` VARCHAR(255) NOT NULL
-) DEFAULT CHARSET=utf8;
+  `Datetime` DATETIME NOT NULL,
+  `Content` TEXT NOT NULL
+) DEFAULT CHARSET=UTF8MB4;
 
 CREATE UNIQUE INDEX tweets_uid ON tweets (Tweet_ID);
