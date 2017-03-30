@@ -1,11 +1,6 @@
 extends layout
 
 block main
-  h1= title
-
-  form#searchForm
-    input(type='text' name='query' placeholder='Search...' )
-    button#submitSearchForm Submit
 
   if tweets
     p= 'Number of tweets: ' + tweets.length

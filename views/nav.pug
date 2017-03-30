@@ -1,1 +1,7 @@
 nav
+  p Search: (use commas to separate terms)
+  form#searchForm
+    input(type='text' name='player' placeholder='Player..' value=qPlayer)
+    input(type='text' name='team' placeholder='Team...' value=qTeam)
+    input(type='text' name='author' placeholder='Tweet Author...' value=qAuthor)
+    button#submitSearchForm Submit

@@ -7,14 +7,22 @@ module.exports = app => {
 };
 
 const getTweets = function (req, res) {
-  const q = req.param('query');
-
-  twitter
-    .search(q)
-    .then(function (data) {
-      res.render('index', {
-        title: 'COM3504',
-        tweets: data.statuses
+  const q = req.query;
+  if (Object.getOwnPropertyNames(q).length !== 0) {
+  // Search if there is at least one query
+    twitter
+      .search(q)
+      .then(function (data) {
+        res.render('index', {
+          tweets: data.statuses,
+          qPlayer: q.player,
+          qTeam: q.team,
+          qAuthor: q.author
+        });
       });
-    });
+  } else {
+    // Render the page with no tweets
+    console.log('No queries submitted!');
+    res.render('index', {});
+  }
 };
