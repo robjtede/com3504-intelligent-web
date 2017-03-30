@@ -5,6 +5,9 @@ html
       style(href="/style/style.css")
 
     block scripts
+      script(src="/socket.io/socket.io.js")
+      script
+        include ../lib/socketclient.js
 
   body
     include header
