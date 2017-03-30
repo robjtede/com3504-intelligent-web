@@ -6,5 +6,6 @@ block main
     p= 'Number of tweets: ' + tweets.length
     for tweet in tweets
       div.tweet
-        p= tweet.created_at + tweet.user.screen_name
-        p= tweet.text
+        p= tweet.Datetime
+        p= tweet.Author
+        p= tweet.Content

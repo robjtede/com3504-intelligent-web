@@ -1,6 +1,7 @@
 'use strict';
 
 const twitter = require('../lib/twitter');
+const sql = require('../lib/sql');
 
 module.exports = app => {
   app.get('/', getTweets);
@@ -13,13 +14,18 @@ const getTweets = function (req, res) {
     twitter
       .search(q)
       .then(function (data) {
-        res.render('index', {
-          tweets: data.statuses,
-          qPlayer: q.player,
-          qTeam: q.team,
-          qAuthor: q.author
-        });
+        sql.insertTweetMulti(data); // Insert into database
       });
+
+    sql.getTweets(q, function (results) {
+      // console.log(results);
+      res.render('index', {
+        tweets: results,
+        qPlayer: q.player,
+        qTeam: q.team,
+        qAuthor: q.author
+      });
+    });
   } else {
     // Render the page with no tweets
     console.log('No queries submitted!');
