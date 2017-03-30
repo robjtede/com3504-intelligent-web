@@ -27,6 +27,7 @@ const getTweets = function (io) {
       twitter
         .search(q)
         .then(function (data) {
+          // TODO convert json to match sql
           // TODO send to page with socket io
           sql.insertTweetMulti(data); // Insert new tweets into database
         });

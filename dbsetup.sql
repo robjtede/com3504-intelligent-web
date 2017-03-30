@@ -8,10 +8,10 @@ ALTER DATABASE com3504assignment CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unico
 
 DROP TABLE IF EXISTS `tweets`;
 CREATE TABLE `tweets` (
-  `Tweet_ID` BIGINT(20) NOT NULL,
-  `Author` VARCHAR(255) NOT NULL,
-  `Datetime` DATETIME NOT NULL,
-  `Content` TEXT NOT NULL
+  `tweet_id` BIGINT(20) NOT NULL,
+  `author` VARCHAR(255) NOT NULL,
+  `datetime` DATETIME NOT NULL,
+  `content` TEXT NOT NULL
 ) DEFAULT CHARSET=utf8mb4;
 
 CREATE UNIQUE INDEX tweets_uid ON tweets (Tweet_ID);
