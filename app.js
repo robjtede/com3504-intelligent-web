@@ -19,12 +19,4 @@ http.listen(port, function () {
   console.log('Started server on port: ' + port);
 });
 
-// Socket.io connection check
-io.on('connection', function (socket) {
-  console.log('User connected.');
-  socket.on('disconnect', function () {
-    console.log('User disconnected.');
-  });
-});
-
 require('./routes/index')(app, io); // Express routing

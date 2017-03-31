@@ -23,14 +23,23 @@ const getTweets = function (io) {
         });
       });
 
-      // Now retrieve more tweets from twitter, and add to page
-      twitter
-        .search(q)
-        .then(function (data) {
-          // TODO convert json to match sql
-          // TODO send to page with socket io
-          sql.insertTweetMulti(data); // Insert new tweets into database
+      // Socket connection
+      io.on('connection', function (socket) {
+        console.log('User connected.');
+        // Now retrieve more tweets from twitter, and add to page
+        twitter
+          .search(q)
+          .then(function (data) {
+            // TODO remove tweets already in page
+            socket.emit('gettweets', data);
+            sql.insertTweetMulti(data); // Insert new tweets into database
+          });
+
+        // disconnect socket
+        socket.on('disconnect', function () {
+          console.log('User disconnected.');
         });
+      });
 
       // Now listen to stream, adding to page as received
       // TODO stream api

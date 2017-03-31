@@ -2,10 +2,11 @@ extends layout
 
 block main
 
-  if tweets
-    p= 'Number of tweets: ' + tweets.length
+  div#tweetCount
+    if tweets
+      p= 'Number of tweets: ' + tweets.length
 
-  div.tweetList
+  div#tweetList
     if tweets
       for tweet in tweets
         div.tweet
