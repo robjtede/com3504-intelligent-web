@@ -2,7 +2,7 @@
 
 const twitter = require('../lib/twitter');
 const sql = require('../lib/sql');
-const moment = require('moment');
+const moment = require('moment'); // Used for converting datetime
 
 module.exports = (app, io) => {
   app.get('/', getTweets(io));
@@ -53,18 +53,23 @@ const getTweets = function (io) {
             }, {}));
           });
 
+        // Now listen to stream, adding to page as received
+        twitter.stream(q, function (tweet) {
+          var formattedTweet = {
+            tweet_id: tweet.id,
+            author: tweet.user.screen_name,
+            datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
+            content: tweet.text
+          };
+          console.log(formattedTweet);
+          // Insert tweet into db
+        });
+
         // disconnect socket
         socket.on('disconnect', function () {
           console.log('User disconnected.');
         });
       });
-
-      // Now listen to stream, adding to page as received
-      // TODO stream api
-    } else {
-    // Render the page with no tweets
-      console.log('No queries submitted!');
-      res.render('index', {});
     }
   };
 };
