@@ -1,10 +1,10 @@
 {
   "db": {
-    "host": "...",
-    "port": "...",
-    "user": "...",
-    "pass": "...",
-    "name": "..."
+    "host": "localhost",
+    "port": "3306",
+    "user": "MySql-Local-Username",
+    "pass": "MySql-Local-Password",
+    "name": "com3504assignment_bcsdre"
   },
   "twitter": {
     "api_key": "...",
