@@ -2,6 +2,7 @@
 
 const twitter = require('../lib/twitter');
 const sql = require('../lib/sql');
+const moment = require('moment');
 
 module.exports = (app, io) => {
   app.get('/', getTweets(io));
@@ -27,6 +28,14 @@ const getTweets = function (io) {
         sql.getTweets(q, function (results) {
           // console.log(results);
           socket.emit('cachedTweets', results);
+          socket.emit('getTweetFrequency', results.reduce(function (days, tweet) {
+            const sod = moment(tweet.datetime).startOf('day');
+
+            if (sod in days) days[sod]++;
+            else days[sod] = 1;
+
+            return days;
+          }, {}));
         });
 
         // Now retrieve more tweets from twitter, and add to page
@@ -36,6 +45,12 @@ const getTweets = function (io) {
             // TODO remove tweets already in page
             socket.emit('getRemoteTweets', data);
             sql.insertTweetMulti(data); // Insert new tweets into database
+
+            // count per day frequency
+            socket.emit('getTweetFrequency', data.reduce(function (days, tweet) {
+              if (tweet.datetime in days) days[tweet.datetime]++;
+              else days[tweet.datetime] = 1;
+            }, {}));
           });
 
         // disconnect socket
