@@ -1,4 +1,4 @@
-/* global io:false */
+/* global io:false Chart:false */
 
 'use strict';
 
@@ -52,17 +52,17 @@ socket.on('streamedTweet', function (tweet) {
 });
 
 socket.on('getTweetFrequency', function (data) {
-  //console.log(data);
-  var ctx = document.getElementById("myChart").getContext("2d");
+  // console.log(data);
+  var ctx = document.getElementById('myChart').getContext('2d');
 
-  var my = new Chart(ctx, {
+  var myChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: Object.keys(data),
       datasets: [{
         label: 'Frequency',
         data: Object.values(data),
-        backgroundColor: "blue"
+        fill: false
       }]
     },
     options: {
@@ -70,26 +70,26 @@ socket.on('getTweetFrequency', function (data) {
       scales: {
         yAxes: [{
           ticks: {
-            fontColor: "black",
+            fontColor: 'black',
             fontSize: 18,
             stepSize: 100,
-            beginAtZero:true
+            beginAtZero: true
           },
-          gridLines:{
-            color:"rgba(100,100,100,0.5)",
-            zeroLineColor:"black"
+          gridLines: {
+            color: 'rgba(100,100,100,0.5)',
+            zeroLineColor: 'black'
           }
         }],
         xAxes: [{
           ticks: {
-            fontColor: "black",
+            fontColor: 'black',
             fontSize: 14,
             stepSize: 1,
-            beginAtZero:false
+            beginAtZero: false
           },
-          gridLines:{
-            color:"rgba(100,100,100,0.5)",
-            zeroLineColor:"black"
+          gridLines: {
+            color: 'rgba(100,100,100,0.5)',
+            zeroLineColor: 'black'
           }
         }]
       }
