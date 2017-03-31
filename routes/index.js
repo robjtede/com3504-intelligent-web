@@ -30,9 +30,7 @@ const getTweets = function (io) {
         twitter
           .search(q)
           .then(function (data) {
-            // TODO convert json to match sql
             // TODO remove tweets already in page
-            // TODO send to page with socket io
             socket.emit('gettweets', data);
             sql.insertTweetMulti(data); // Insert new tweets into database
           });
