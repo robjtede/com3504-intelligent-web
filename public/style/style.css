@@ -1,14 +1,39 @@
 header {
   background-color: #294F6D;
-  color: #4F718B;
+  color: white;
+  padding-top: 5px;
+  margin-top: 10px:
 }
 body {
   background-color: #49677E;
 }
 .tweet {
   background-color: #294F6D;
-  padding-bottom: 8px;
+  padding-left: 10px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  padding-right: 10px;
+  margin-bottom: 8px;
 }
 .tweets {
-  padding-top: 16px;
+  background-color: #002266;
+  padding-top: 20px;
+}
+.tweetlist {
+  margin: 0 auto;
+  max-width: 1000px;
+}
+label{
+  padding-left: 40px;
+}
+#searchform{
+  width: 300px;
+  text-align: right;
+}
+input{
+  margin-left: 5px;
+  margin-bottom: 15px;
+}
+nav{
+  padding-bottom: 1px;
 }
