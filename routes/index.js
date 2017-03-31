@@ -48,8 +48,12 @@ const getTweets = function (io) {
 
             // count per day frequency
             socket.emit('getTweetFrequency', data.reduce(function (days, tweet) {
-              if (tweet.datetime in days) days[tweet.datetime]++;
-              else days[tweet.datetime] = 1;
+              const sod = moment(tweet.datetime).startOf('day');
+
+              if (sod in days) days[sod]++;
+              else days[sod] = 1;
+
+              return days;
             }, {}));
           });
 
