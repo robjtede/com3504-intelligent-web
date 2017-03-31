@@ -9,14 +9,14 @@ app.set('view engine', 'pug');
 
 app.use(express.static('./public')); // Static file serving
 
-// Socket.io setup
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+require('./routes/index')(app); // Express routing
 
 // Start server
 const port = process.env.PORT || 3000;
-http.listen(port, function () {
+const server = app.listen(port, function () {
   console.log('Started server on port: ' + port);
 });
 
-require('./routes/index')(app, io); // Express routing
+// Socket.io setup
+const io = require('socket.io')(server);
+require('./io')(io);

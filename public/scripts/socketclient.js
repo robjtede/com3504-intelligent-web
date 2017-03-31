@@ -4,11 +4,21 @@
 
 var ids = new Set();
 
-var socket = io();
-socket.connect();
+var socket = io.connect();
+
+socket.on('connect', function () {
+  console.log('connected', socket.id);
+
+  socket.emit('join', {
+    player: document.querySelector('#player').value,
+    team: document.querySelector('#team').value,
+    author: document.querySelector('#author').value
+  });
+});
 
 // Got socket of tweets from database
 socket.on('cachedTweets', function (data) {
+  console.log('got cached tweets');
   var tweetsDiv = document.getElementById('tweetList');
   var tweetsCount = document.getElementById('tweetCount');
   var addedTweets = '';
@@ -27,6 +37,7 @@ socket.on('cachedTweets', function (data) {
 
 // Got socket of tweets from get/search
 socket.on('getRemoteTweets', function (data) {
+  console.log('got remote tweets');
   var tweetsDiv = document.getElementById('tweetList');
   var tweetsCount = document.getElementById('tweetCount');
   var addedTweets = '';
@@ -45,13 +56,19 @@ socket.on('getRemoteTweets', function (data) {
 
 // Got socket of streamed tweet
 socket.on('streamedTweet', function (tweet) {
+  console.log('got streamed tweet');
+
   var tweetsDiv = document.getElementById('tweetList');
   var addedTweets = '<p> STREAM RESULT:</p>';
-  addedTweets += makeTweetDiv(tweet);
-  tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
+
+  if (!ids.has(tweet.id)) {
+    addedTweets += makeTweetDiv(tweet);
+    tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
+  }
 });
 
 socket.on('getTweetFrequency', function (data) {
+  console.log('got tweet frequency');
   var ctx = document.getElementById('myChart').getContext('2d');
     // Creates and draws the line chart using the data
   var myChart = new Chart(ctx, {
