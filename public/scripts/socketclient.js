@@ -56,12 +56,12 @@ socket.on('getRemoteTweets', function (data) {
 
 // Got socket of streamed tweet
 socket.on('streamedTweet', function (tweet) {
-  console.log('got streamed tweet');
-
-  var tweetsDiv = document.getElementById('tweetList');
-  var addedTweets = '<p> STREAM RESULT:</p>';
+  console.log('got streamed tweet', ids.has(tweet.id));
 
   if (!ids.has(tweet.id)) {
+    var tweetsDiv = document.getElementById('tweetList');
+    var addedTweets = '<p> STREAM RESULT:</p>';
+
     addedTweets += makeTweetDiv(tweet);
     tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
   }

@@ -38,7 +38,9 @@ module.exports = function (io) {
         });
 
       // Now listen to stream, adding to page as received
-      const stream = twitter.stream(q, function (tweet) {
+      const tweetStream = twitter.stream(q);
+
+      tweetStream.on('tweet', function (tweet) {
         // Format tweet for consistency
         const formattedTweet = {
           tweet_id: tweet.id,
@@ -58,7 +60,7 @@ module.exports = function (io) {
       socket.on('disconnect', function () {
         console.log('User disconnected.');
         currentSockets--;
-        stream.stop();
+        tweetStream.stop();
       });
     });
   });
