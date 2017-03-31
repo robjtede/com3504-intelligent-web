@@ -6,7 +6,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "start:dev": "NODE_ENV=development yarn && yarn nodemon app.js",
+    "start:dev": "NODE_ENV=development yarn && yarn nodemon -- -e js,pug app.js",
     "start": "NODE_ENV=production yarn && node app.js"
   },
   "dependencies": {
