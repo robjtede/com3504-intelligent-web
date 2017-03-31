@@ -42,9 +42,10 @@ const getTweets = function (io) {
         twitter
           .search(q)
           .then(function (data) {
-            // TODO remove tweets already in page
+            // Send dates to page
             socket.emit('getRemoteTweets', data);
-            sql.insertTweetMulti(data); // Insert new tweets into database
+            // Insert new tweets into database
+            sql.insertTweetMulti(data);
 
             // count per day frequency
             socket.emit('getTweetFrequency', data.reduce(function (days, tweet) {
@@ -59,14 +60,17 @@ const getTweets = function (io) {
 
         // Now listen to stream, adding to page as received
         twitter.stream(q, function (tweet) {
+          // Format tweet for consistency
           var formattedTweet = {
             tweet_id: tweet.id,
             author: tweet.user.screen_name,
             datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
             content: tweet.text
           };
-          console.log(formattedTweet);
-          // Insert tweet into db
+          // Insert into db
+          sql.insertTweetSingle(formattedTweet);
+          // Send tweet to page
+          socket.emit('streamedTweet', formattedTweet);
         });
 
         // disconnect socket
