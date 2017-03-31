@@ -52,9 +52,8 @@ socket.on('streamedTweet', function (tweet) {
 });
 
 socket.on('getTweetFrequency', function (data) {
-  // console.log(data);
   var ctx = document.getElementById('myChart').getContext('2d');
-
+    // Creates and draws the line chart using the data
   var myChart = new Chart(ctx, {
     type: 'line',
     data: {
