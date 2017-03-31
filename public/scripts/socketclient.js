@@ -52,7 +52,49 @@ socket.on('streamedTweet', function (tweet) {
 });
 
 socket.on('getTweetFrequency', function (data) {
-  console.log(data);
+  //console.log(data);
+  var ctx = document.getElementById("myChart").getContext("2d");
+
+  var my = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Object.keys(data),
+      datasets: [{
+        label: 'Frequency',
+        data: Object.values(data),
+        backgroundColor: "blue"
+      }]
+    },
+    options: {
+      responsive: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: "black",
+            fontSize: 18,
+            stepSize: 100,
+            beginAtZero:true
+          },
+          gridLines:{
+            color:"rgba(100,100,100,0.5)",
+            zeroLineColor:"black"
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            fontColor: "black",
+            fontSize: 14,
+            stepSize: 1,
+            beginAtZero:false
+          },
+          gridLines:{
+            color:"rgba(100,100,100,0.5)",
+            zeroLineColor:"black"
+          }
+        }]
+      }
+    }
+  });
 });
 
 // Prepare a tweet div

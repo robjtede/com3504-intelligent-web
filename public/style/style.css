@@ -28,11 +28,11 @@ body {
   max-width: 1000px;
 }
 #myChart{
-margin: 0 auto;
-padding-top: 10px;
-padding-left: 10px;
-padding-bottom: 10px;
-color: black;
+background-color: white;
+margin-top: 20px;
+margin-left: 20px;
+margin-bottom: 20px;
+
 }
 
 label{
