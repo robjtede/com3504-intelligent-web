@@ -1,0 +1,14 @@
+header {
+  background-color: #294F6D;
+  color: #4F718B;
+}
+body {
+  background-color: #49677E;
+}
+.tweet {
+  background-color: #294F6D;
+  padding-bottom: 8px;
+}
+.tweets {
+  padding-top: 16px;
+}
