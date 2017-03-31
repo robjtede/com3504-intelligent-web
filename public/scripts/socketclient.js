@@ -29,6 +29,14 @@ socket.on('getRemoteTweets', function (data) {
   tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
 });
 
+// Got socket of streamed tweet
+socket.on('streamedTweet', function (tweet) {
+  var tweetsDiv = document.getElementById('tweetList');
+  var addedTweets = '<p> STREAM RESULT:</p>';
+  addedTweets += makeTweetDiv(tweet);
+  tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
+});
+
 socket.on('getTweetFrequency', function (data) {
   console.log(data);
 });
