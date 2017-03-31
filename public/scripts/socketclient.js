@@ -2,31 +2,45 @@
 
 'use strict';
 
+var ids = new Set();
+
 var socket = io();
 socket.connect();
 
 // Got socket of tweets from database
 socket.on('cachedTweets', function (data) {
   var tweetsDiv = document.getElementById('tweetList');
+  var tweetsCount = document.getElementById('tweetCount');
   var addedTweets = '';
+
   for (var t in data) {
     var tweet = data[t];
+    ids.add(tweet.id);
+
     addedTweets += '<p> CACHED RESULT:</p>';
     addedTweets += makeTweetDiv(tweet);
   }
+
   tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
+  tweetsCount.textContent = data.length;
 });
 
 // Got socket of tweets from get/search
 socket.on('getRemoteTweets', function (data) {
   var tweetsDiv = document.getElementById('tweetList');
+  var tweetsCount = document.getElementById('tweetCount');
   var addedTweets = '';
+
   for (var t in data) {
     var tweet = data[t];
+    if (ids.has(tweet.id)) continue;
+
     addedTweets += '<p> GET/SEARCH RESULT:</p>';
     addedTweets += makeTweetDiv(tweet);
+
+    tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
+    tweetsCount.textContent = parseInt(tweetsCount.textContent) + data.length;
   }
-  tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
 });
 
 // Got socket of streamed tweet
