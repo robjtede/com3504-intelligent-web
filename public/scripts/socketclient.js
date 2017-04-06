@@ -118,9 +118,10 @@ socket.on('getTweetFrequency', function (data) {
 // Prepare a tweet div
 function makeTweetDiv (tweet) {
   var newDiv = '<div class="tweet">' +
-    '<p>' + tweet.datetime + '</p>' +
-      '<p>' + tweet.author + '</p>' +
-        '<p>' + tweet.content + '</p>' +
-          '</div>';
+    '<p>' + tweet.tweet_id + '</p>' +
+      '<p>' + tweet.datetime + '</p>' +
+        '<p>' + tweet.author + '</p>' +
+          '<p>' + tweet.content + '</p>' +
+            '</div>';
   return newDiv;
 }
