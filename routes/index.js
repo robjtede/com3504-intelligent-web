@@ -1,12 +1,10 @@
 'use strict';
 
-const moment = require('moment'); // Used for converting datetime
-
 module.exports = app => {
-  app.get('/', getTweets);
+  app.get('/', renderPage);
 };
 
-function getTweets (req, res) {
+function renderPage (req, res) {
   const q = req.query;
 
   // Render page

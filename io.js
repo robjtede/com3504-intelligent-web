@@ -9,7 +9,8 @@ let currentSockets = 0;
 // Socket connection
 module.exports = function (io) {
   io.on('connection', function (socket) {
-    console.log(++currentSockets + ' users connected.... new connect: ' + socket.id);
+    // console.log(++currentSockets + ' users connected.... new connect: ' + socket.id);
+    console.log('new connection: ' + socket.id);
 
     let q = null;
 
@@ -17,14 +18,15 @@ module.exports = function (io) {
     socket.on('join', function (client) {
       console.log(client);
       q = client;
+      // Check query isn't empty
+      if (q.player || q.team || q.author) {
+        sql.getTweets(q, function (results) {
+          socket.emit('cachedTweets', results);
+          socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
+        });
 
-      sql.getTweets(q, function (results) {
-        socket.emit('cachedTweets', results);
-        socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
-      });
-
-      // Now retrieve more tweets from twitter, and add to page
-      twitter
+        // Now retrieve more tweets from twitter, and add to page
+        twitter
         .search(q)
         .then(function (data) {
           // Send dates to page
@@ -38,30 +40,31 @@ module.exports = function (io) {
         });
 
       // Now listen to stream, adding to page as received
-      const tweetStream = twitter.stream(q);
+        const tweetStream = twitter.stream(q);
 
-      tweetStream.on('tweet', function (tweet) {
+        tweetStream.on('tweet', function (tweet) {
         // Format tweet for consistency
-        const formattedTweet = {
-          tweet_id: tweet.id,
-          author: tweet.user.screen_name,
-          datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
-          content: tweet.text
-        };
+          const formattedTweet = {
+            tweet_id: tweet.id,
+            author: tweet.user.screen_name,
+            datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
+            content: tweet.text
+          };
 
         // Insert into db
-        sql.insertTweetSingle(formattedTweet);
+          sql.insertTweetSingle(formattedTweet);
 
         // Send tweet to page
-        socket.emit('streamedTweet', formattedTweet);
-      });
+          socket.emit('streamedTweet', formattedTweet);
+        });
 
       // disconnect socket
-      socket.on('disconnect', function () {
-        console.log('User disconnected.');
-        currentSockets--;
-        tweetStream.stop();
-      });
+        socket.on('disconnect', function () {
+          console.log('User disconnected.');
+        // currentSockets--;
+          tweetStream.stop();
+        });
+      }
     });
   });
 };
