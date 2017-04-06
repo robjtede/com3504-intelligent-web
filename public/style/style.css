@@ -49,3 +49,13 @@ input{
 nav{
   padding-bottom: 1px;
 }
+
+.tweet {
+  border: 0 solid red;
+
+  transition: border 1s ease
+}
+
+.tweet:first-child {
+  border-width: 2px;
+}

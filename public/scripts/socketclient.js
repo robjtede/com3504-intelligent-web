@@ -25,7 +25,8 @@ socket.on('cachedTweets', function (data) {
 
   for (var t in data) {
     var tweet = data[t];
-    ids.add(tweet.id);
+    if (ids.has(tweet.tweet_id)) continue;
+    ids.add(tweet.tweet_id);
 
     addedTweets += '<p> CACHED RESULT:</p>';
     addedTweets += makeTweetDiv(tweet);
@@ -44,7 +45,7 @@ socket.on('getRemoteTweets', function (data) {
 
   for (var t in data) {
     var tweet = data[t];
-    if (ids.has(tweet.id)) continue;
+    if (ids.has(tweet.tweet_id)) continue;
 
     addedTweets += '<p> GET/SEARCH RESULT:</p>';
     addedTweets += makeTweetDiv(tweet);
@@ -56,6 +57,7 @@ socket.on('getRemoteTweets', function (data) {
 
 // Got socket of streamed tweet
 socket.on('streamedTweet', function (tweet) {
+  if (ids.has(tweet.tweet_id)) return;
   console.log('got streamed tweet', ids.has(tweet.id));
 
   if (!ids.has(tweet.id)) {

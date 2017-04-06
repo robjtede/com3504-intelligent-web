@@ -14,9 +14,9 @@ module.exports = function (io) {
     let q = null;
 
     // First retrieve from local db, this will be the fastest
-    socket.on('join', function (data) {
-      console.log(data);
-      q = data;
+    socket.on('join', function (client) {
+      console.log(client);
+      q = client;
 
       sql.getTweets(q, function (results) {
         socket.emit('cachedTweets', results);
