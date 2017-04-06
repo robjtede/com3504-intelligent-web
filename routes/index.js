@@ -2,7 +2,7 @@
 
 var moment = require('moment'); // Used for converting datetime
 
-module.exports = app => {
+module.exports = function (app) {
   app.get('/', getTweets);
 };
 

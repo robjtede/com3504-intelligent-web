@@ -4,14 +4,14 @@ var moment = require('moment');
 var twitter = require('./lib/twitter');
 var sql = require('./lib/sql');
 
-let currentSockets = 0;
+var currentSockets = 0;
 
 // Socket connection
 module.exports = function (io) {
   io.on('connection', function (socket) {
     console.log(++currentSockets + ' users connected.... new connect: ' + socket.id);
 
-    let q = null;
+    var q = null;
 
     // First retrieve from local db, this will be the fastest
     socket.on('join', function (client) {
