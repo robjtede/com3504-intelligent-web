@@ -1,8 +1,8 @@
 'use strict';
 
-const moment = require('moment');
-const twitter = require('./lib/twitter');
-const sql = require('./lib/sql');
+var moment = require('moment');
+var twitter = require('./lib/twitter');
+var sql = require('./lib/sql');
 
 let currentSockets = 0;
 
@@ -38,11 +38,11 @@ module.exports = function (io) {
         });
 
       // Now listen to stream, adding to page as received
-      const tweetStream = twitter.stream(q);
+      var tweetStream = twitter.stream(q);
 
       tweetStream.on('tweet', function (tweet) {
         // Format tweet for consistency
-        const formattedTweet = {
+        var formattedTweet = {
           tweet_id: tweet.id,
           author: tweet.user.screen_name,
           datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
@@ -67,7 +67,7 @@ module.exports = function (io) {
 };
 
 function groupTweet (days, tweet) {
-  const sod = moment(tweet.datetime).startOf('day');
+  var sod = moment(tweet.datetime).startOf('day');
 
   if (sod in days) days[sod]++;
   else days[sod] = 1;

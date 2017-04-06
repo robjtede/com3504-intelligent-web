@@ -6,8 +6,8 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "start:dev": "NODE_ENV=development yarn && yarn nodemon -- -e js,pug app.js",
-    "start": "NODE_ENV=production yarn && node app.js"
+    "start:dev": "NODE_ENV=development npm nodemon -- -e js,pug app.js",
+    "start": "NODE_ENV=production node app.js"
   },
   "dependencies": {
     "express": "^4.15.2",
