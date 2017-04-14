@@ -1,7 +1,5 @@
 'use strict';
 
-var moment = require('moment'); // Used for converting datetime
-
 module.exports = function (app) {
   app.get('/', getTweets);
 };
