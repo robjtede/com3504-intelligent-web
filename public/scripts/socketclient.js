@@ -3,8 +3,6 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', function () {
-  var ids = new Set();
-
   var socket = io.connect();
   var checkbox = document.getElementById('cacheonly');
   checkbox.checked = window.localStorage.useCache;
@@ -33,8 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     for (var t in data) {
       var tweet = data[t];
-      if (ids.has(tweet.tweet_id)) continue;
-      ids.add(tweet.tweet_id);
 
       addedTweets += '<p> CACHED RESULT:</p>';
       addedTweets += makeTweetDiv(tweet);
@@ -53,28 +49,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     for (var t in data) {
       var tweet = data[t];
-      if (ids.has(tweet.tweet_id)) continue;
 
       addedTweets += '<p> GET/SEARCH RESULT:</p>';
       addedTweets += makeTweetDiv(tweet);
-
-      tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
-      tweetsCount.textContent = parseInt(tweetsCount.textContent) + data.length;
     }
+    tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
+    tweetsCount.textContent = parseInt(tweetsCount.textContent) + data.length;
   });
 
   // Got socket of streamed tweet
   socket.on('streamedTweet', function (tweet) {
-    if (ids.has(tweet.tweet_id)) return;
-    console.log('got streamed tweet', ids.has(tweet.id));
+    var tweetsDiv = document.getElementById('tweetList');
+    var addedTweet = '<p> STREAM RESULT:</p>';
 
-    if (!ids.has(tweet.id)) {
-      var tweetsDiv = document.getElementById('tweetList');
-      var addedTweets = '<p> STREAM RESULT:</p>';
-
-      addedTweets += makeTweetDiv(tweet);
-      tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
-    }
+    addedTweet += makeTweetDiv(tweet);
+    tweetsDiv.innerHTML = addedTweet + tweetsDiv.innerHTML;
   });
 
   socket.on('getTweetFrequency', function (data) {
