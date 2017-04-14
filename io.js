@@ -1,10 +1,10 @@
 'use strict';
 
-const moment = require('moment');
-const twitter = require('./lib/twitter');
-const sql = require('./lib/sql');
+var moment = require('moment');
+var twitter = require('./lib/twitter');
+var sql = require('./lib/sql');
 
-let currentSockets = 0;
+var currentSockets = 0;
 
 // Socket connection
 module.exports = function (io) {
@@ -12,7 +12,7 @@ module.exports = function (io) {
     // console.log(++currentSockets + ' users connected.... new connect: ' + socket.id);
     console.log('new connection: ' + socket.id);
 
-    let q = null;
+    var q = null;
 
     // First retrieve from local db, this will be the fastest
     socket.on('join', function (client) {
@@ -40,16 +40,16 @@ module.exports = function (io) {
         });
 
       // Now listen to stream, adding to page as received
-        const tweetStream = twitter.stream(q);
+      var tweetStream = twitter.stream(q);
 
         tweetStream.on('tweet', function (tweet) {
         // Format tweet for consistency
-          const formattedTweet = {
-            tweet_id: tweet.id,
-            author: tweet.user.screen_name,
-            datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
-            content: tweet.text
-          };
+        var formattedTweet = {
+          tweet_id: tweet.id,
+          author: tweet.user.screen_name,
+          datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
+          content: tweet.text
+        };
 
         // Insert into db
           sql.insertTweetSingle(formattedTweet);
@@ -70,7 +70,7 @@ module.exports = function (io) {
 };
 
 function groupTweet (days, tweet) {
-  const sod = moment(tweet.datetime).startOf('day');
+  var sod = moment(tweet.datetime).startOf('day');
 
   if (sod in days) days[sod]++;
   else days[sod] = 1;

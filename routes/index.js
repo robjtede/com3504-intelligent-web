@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = app => {
-  app.get('/', renderPage);
+module.exports = function (app) {
+  app.get('/', getTweets);
 };
 
-function renderPage (req, res) {
-  const q = req.query;
+function getTweets (req, res) {
+  var q = req.query;
 
   // Render page
   res.render('index', {
