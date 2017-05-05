@@ -14,4 +14,14 @@ CREATE TABLE `tweets` (
   `content` TEXT NOT NULL
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `searches`;
+CREATE TABLE `searches` (
+  `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `player` TEXT,
+  `team` TEXT,
+  `author` TEXT,
+  `lastId` BIGINT(20) DEFAULT '0',
+  `mode` VARCHAR(5) NOT NULL DEFAULT 'AND'
+) DEFAULT CHARSET=utf8mb4;
+
 CREATE UNIQUE INDEX tweets_uid ON tweets (Tweet_ID);
