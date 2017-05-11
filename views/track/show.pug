@@ -1,5 +1,13 @@
 extends ../layout
 
+append scripts
+  if tracking
+    script= "player = " + tracking.player
+    script= "team = " + tracking.team
+    script= "author = " + tracking.author
+    script= "mode = " + tracking.mode
+    script= "lastId = " + tracking.lastId
+
 block main
   canvas#myChart(width="1200" height="400")
 

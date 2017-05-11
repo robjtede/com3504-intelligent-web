@@ -40,21 +40,26 @@ function list (req, res) {
 }
 
 function show (req, res) {
-  var q = req.query;
   var db = sql.getConnection();
 
   db.query(
     'SELECT * FROM searches ORDER BY id DESC LIMIT 10',
-    function (err, results, fields) {
+    function (err, trackings, fields) {
       if (err) throw new Error(err);
 
-        // Render page
-      res.render('track/show', {
-        player: q.player,
-        team: q.team,
-        author: q.author,
-        trackings: results
-      });
+      db.query(
+        'SELECT * FROM tweets WHERE trackings_id = ?',
+        [req.params.id],
+        function (err, tweets, fields) {
+          if (err) throw new Error(err);
+
+          // Render page
+          res.render('track/show', {
+            trackings: trackings,
+            tracking: tweets
+          });
+        }
+      );
     }
   );
 };
