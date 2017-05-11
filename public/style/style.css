@@ -8,6 +8,19 @@ button {
   font-family: inherit;
 }
 
+button,
+input[type="submit"] {
+  padding: 0.7em 1em;
+  border-radius: 5px;
+  background: hsl(0, 0%, 90%);
+  border: 1px solid grey;
+}
+
+button:hover,
+input[type="submit"]:hover {
+  background: hsl(0, 0%, 93%);
+}
+
 input[type="text"],
 input[type="password"] {
   padding: 0.4em;
@@ -32,6 +45,7 @@ body > .col:first-of-type {
       hsl(0, 70%, 45%) 80%
     );
 
+  border-right: 2px solid hsl(0, 70%, 30%);
   background-color: hsl(0, 70%, 45%);
   color: hsl(0, 0%, 95%);
 }
@@ -71,18 +85,45 @@ nav a:not(:last-of-type) {
   border-bottom: 2px solid;
   border-image: linear-gradient(
     to right,
-    hsla(0, 100%, 60%, 0) 0%,
+    hsla(0, 100%, 60%, 0) 5%,
     hsla(0, 100%, 60%, 0.2) 15%,
     hsla(0, 100%, 60%, 1) 60%,
     hsla(0, 100%, 60%, 1) 70%,
     hsla(0, 100%, 60%, 0.2) 85%,
-    hsla(0, 100%, 60%, 0) 100%
+    hsla(0, 100%, 60%, 0) 95%
   );
   border-image-slice: 1;
 }
 
 nav a:hover {
   background: hsla(0, 100%, 60%, 0.4);
+}
+
+.recent-trackings-list {
+  padding: 0 1rem;
+}
+
+.tracking {
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  padding: 0.6em 1em;
+}
+
+.tracking:hover {
+  background: hsla(0, 0%, 0%, 0.1);
+  cursor: pointer;
+}
+
+.tracking-player::before {
+  content: 'Player: ';
+}
+
+.tracking-team::before {
+  content: 'Team: ';
+}
+
+.tracking-author::before {
+  content: 'Author: ';
 }
 
 #tweetcount {
@@ -106,12 +147,21 @@ nav a:hover {
   max-height: 300px;
 }
 
-label {
-  padding-left: 40px;
+.searchform {
+  text-align: center;
 }
 
-#searchform {
-  text-align: center;
+.searchForm table {
+  border-collapse: collapse;
+  border: none;
+}
+
+.searchForm table td {
+  padding: 0.2em 0.5em;
+}
+
+.searchForm table td:first-child {
+  text-align: right;
 }
 
 .tweet {

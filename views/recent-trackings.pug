@@ -1,9 +1,9 @@
-div.trackings
+div.recent-trackings
   h2 Recent Trackings
 
-  div.trackings-list
+  div.recent-trackings-list
     for tracking in trackings
-      div.tracking
-        div.tracking-player
-        div.tracking-team
-        div.tracking-author
+      div.tracking(onclick="window.location='/trackings/" + tracking.id + "'")
+        div.tracking-player= tracking.player
+        div.tracking-team= tracking.team
+        div.tracking-author= tracking.author
