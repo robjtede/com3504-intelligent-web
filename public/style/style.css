@@ -24,7 +24,14 @@ body {
 body > .col:first-of-type {
   grid-column: 1 / 2;
 
-  background-image: url('/images/otis-redding.png');
+  background-image:
+    url('/images/otis-redding.png'),
+    linear-gradient(
+      to right,
+      hsl(0, 85%, 50%) 0%,
+      hsl(0, 70%, 45%) 80%
+    );
+
   background-color: hsl(0, 70%, 45%);
   color: hsl(0, 0%, 95%);
 }
@@ -57,15 +64,25 @@ nav a {
   padding: 1rem;
   color: inherit;
   text-decoration: none;
-  border-top: 1px solid hsl(0, 0%, 80%);
+  text-align: center;
 }
 
-nav a:last-child {
-  border-bottom: 1px solid hsl(0, 0%, 80%);
+nav a:not(:last-of-type) {
+  border-bottom: 2px solid;
+  border-image: linear-gradient(
+    to right,
+    hsla(0, 100%, 60%, 0) 0%,
+    hsla(0, 100%, 60%, 0.2) 15%,
+    hsla(0, 100%, 60%, 1) 60%,
+    hsla(0, 100%, 60%, 1) 70%,
+    hsla(0, 100%, 60%, 0.2) 85%,
+    hsla(0, 100%, 60%, 0) 100%
+  );
+  border-image-slice: 1;
 }
 
 nav a:hover {
-  background: hsla(30, 100%, 50%, 0.3);
+  background: hsla(0, 100%, 60%, 0.4);
 }
 
 #tweetcount {

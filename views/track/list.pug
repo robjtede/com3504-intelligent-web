@@ -1,0 +1,9 @@
+extends ../layout
+
+block main
+  div.trackings-list
+    for tracking in trackings
+      div.tracking
+        div.tracking-player= tracking.player
+        div.tracking-team= tracking.team
+        div.tracking-author= tracking.author

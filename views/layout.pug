@@ -13,7 +13,9 @@ html
   body
     div.col
       include header
-      include trackings
+
+      if trackings
+        include recent-trackings
 
     div.col
       block main
