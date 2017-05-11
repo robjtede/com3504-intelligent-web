@@ -10,6 +10,7 @@ app.set('view engine', 'pug');
 app.use(express.static('./public')); // Static file serving
 
 require('./routes/index')(app); // Express routing
+require('./routes/trackings')(app); // Express routing
 
 // Start server
 var port = process.env.PORT || 3000;

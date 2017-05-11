@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "eslint": "^3.17.1",
+    "livereload-watch-cli": "0.0.2",
     "nodemon": "^1.11.0"
   }
 }

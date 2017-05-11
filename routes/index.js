@@ -1,16 +1,9 @@
 'use strict';
 
 module.exports = function (app) {
-  app.get('/', getTweets);
+  app.get('/', index);
 };
 
-function getTweets (req, res) {
-  var q = req.query;
-
-  // Render page
-  res.render('index', {
-    qPlayer: q.player,
-    qTeam: q.team,
-    qAuthor: q.author
-  });
-};
+function index (req, res) {
+  res.render('index');
+}

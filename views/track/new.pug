@@ -1,0 +1,25 @@
+extends ../layout
+
+block main
+  p Search: (use commas to separate terms)
+  form.searchForm(method="post" action="/trackings")
+    table
+      tr
+        td: label(for="player") Player:
+        td: input(type="text" id="player" name="player" placeholder="Player.." value=player)
+
+      tr
+        td: label(for="team") Team:
+        td: input(type="text" id="tea" name="tea" placeholder="Team..." value=team)
+
+      tr
+        td: label(for="author") Author:
+        td: input(type="text" id="author" name="author" placeholder="Tweet Author..." value=author)
+
+      tr
+        td: label(for="cacheonly") Only Use Cached Tweets
+        td: input(type="checkbox" id="cacheonly" name="cacheonly")
+
+      tr
+        td &nbsp;
+        td: input#submitSearchForm(type="submit")
