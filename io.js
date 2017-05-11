@@ -23,13 +23,28 @@ module.exports = function (io) {
       if (q.player || q.team || q.author) {
         // Initialise set to track existing ids (prevent duplicate tweets)
         var existingIds = new Set();
+
+        // TODO Check if search present in database, for max id referencing.
+        sql.getSearch(q, function (results) {
+          console.log('Old searches:');
+          console.log(results);
+          if (results.length === 0) {
+            // TODO implement "isAnd" boolean according to checkbox
+            sql.addSearch(q.player, q.team, q.author, true, function (newResults) {
+              console.log('New search created!');
+              console.log('New Search ID: ' + newResults.insertId);
+            });
+          }
+        });
+        // TODO Add search to database if it isn't present
+
         // Get tweets from database
         sql.getTweets(q, function (results) {
           socket.emit('cachedTweets', results); // Send tweets to client
           // Send frequencies to client
           socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
           for (var ind in results) {
-            console.log('LOCAL  - Added: ', results[ind].tweet_id);
+            // console.log('LOCAL  - Added: ', results[ind].tweet_id);
             existingIds.add(results[ind].tweet_id); // Add id to existing ids
           }
         });
@@ -42,10 +57,10 @@ module.exports = function (io) {
           var fltData = data.filter(function (elem) {
             if (!existingIds.contains(elem.tweet_id)) {
               existingIds.add(elem.tweet_id);
-              console.log('REMOTE - Unique: ', elem.tweet_id);
+              // console.log('REMOTE - Unique: ', elem.tweet_id);
               return true;
             } else {
-              console.log('REMOTE - Existing: ', elem.tweet_id);
+              // console.log('REMOTE - Existing: ', elem.tweet_id);
               return false;
             }
           });

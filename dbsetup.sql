@@ -20,7 +20,7 @@ CREATE TABLE `searches` (
   `player` TEXT,
   `team` TEXT,
   `author` TEXT,
-  `lastId` BIGINT(20) DEFAULT '0',
+  `newestTweet` BIGINT(20) DEFAULT '0',
   `mode` VARCHAR(5) NOT NULL DEFAULT 'AND'
 ) DEFAULT CHARSET=utf8mb4;
 
