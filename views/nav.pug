@@ -1,20 +1,3 @@
 nav
-  p Search: (use commas to separate terms)
-  form#searchForm
-    label(for="player") Player:
-    input(type='text' id="player" name='player' placeholder='Player..' value=qPlayer)
-    br
-
-    label(for="team") Team:
-    input(type='text' id="team" name='team' placeholder='Team...' value=qTeam)
-    br
-
-    label(for="author") Author:
-    input(type='text' id="author" name='author' placeholder='Tweet Author...' value=qAuthor)
-    br
-
-    label(for="cacheonly") Only Use Cached Tweets
-    input(type='checkbox' id="cacheonly" name="cacheonly")
-    br
-
-    input#submitSearchForm(type="submit")
+  a(href="/") Home
+  a(href="/trackings/new") Start Track
