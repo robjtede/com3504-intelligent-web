@@ -1,12 +1,12 @@
 extends ../layout
 
 append scripts
-  if tracking
-    script= "player = " + tracking.player
-    script= "team = " + tracking.team
-    script= "author = " + tracking.author
-    script= "mode = " + tracking.mode
-    script= "lastId = " + tracking.lastId
+  if search
+    script!= "window.player = \"" + search.player + "\""
+    script!= "window.team = \"" + search.team + "\""
+    script!= "window.author = \"" + search.author + "\""
+    script!= "window.newestTweet = " + search.newestTweet
+    script!= "window.mode = \"" + search.mode + "\""
 
 block main
   canvas#myChart(width="1200" height="400")

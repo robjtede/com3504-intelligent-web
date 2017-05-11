@@ -48,16 +48,27 @@ function show (req, res) {
       if (err) throw new Error(err);
 
       db.query(
-        'SELECT * FROM tweets WHERE trackings_id = ?',
+        'SELECT * FROM searches WHERE id = ?',
         [req.params.id],
-        function (err, tweets, fields) {
+        function (err, search, fields) {
           if (err) throw new Error(err);
 
-          // Render page
-          res.render('track/show', {
-            trackings: trackings,
-            tracking: tweets
-          });
+          console.log(search);
+
+          db.query(
+            'SELECT * FROM tweets WHERE searches_id = ?',
+            [req.params.id],
+            function (err, tweets, fields) {
+              if (err) throw new Error(err);
+
+              // Render page
+              res.render('track/show', {
+                trackings: trackings,
+                search: search[0],
+                tweets: tweets
+              });
+            }
+          );
         }
       );
     }
