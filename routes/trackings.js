@@ -1,8 +1,10 @@
 'use strict';
 
 var sql = require('../lib/sql');
+var querystring = require('querystring'); // Query parsing
 
 module.exports = function (app) {
+  app.get('/trackings/new/submit', create);
   app.get('/trackings/new', newTrack);
   app.get('/trackings/:id', show);
   app.post('/trackings', list);
@@ -14,7 +16,40 @@ function newTrack (req, res) {
 }
 
 function create (req, res) {
+  // console.log(req.query);
 
+  var q = req.query;
+
+  if (q) {
+    console.log(q);
+    if (q.player || q.team || q.author) {
+      // TODO change to switch button
+      if (q.modetoggle) {
+        console.log('Mode: AND');
+      } else {
+        console.log('Mode: OR');
+      }
+
+      // Check if search present in database, for max id referencing.
+      sql.getSearch(q, function (results) {
+        console.log('Old searches:');
+        console.log(results);
+        if (results.length === 0) {
+          // No existing search exists, make a new one
+          // TODO implement "isAnd" boolean according to checkbox
+          sql.addSearch(q.player, q.team, q.author, true, function (newResults) {
+            console.log('New search created!');
+            console.log('New Search ID: ' + newResults.insertId);
+          });
+        } else {
+          // Existing search exists
+          // TODO handle this issue
+        }
+      });
+    }
+  }
+  // TODO redirect to specific new tracking on success instead
+  res.redirect('/trackings');
 }
 
 function list (req, res) {

@@ -2,24 +2,31 @@ extends ../layout
 
 block main
   p Search: (use commas to separate terms)
-  form.searchForm(method="post" action="/trackings")
+  form#searchForm.searchForm(method='get' action='/trackings/new/submit')
     table
       tr
-        td: label(for="player") Player:
-        td: input(type="text" id="player" name="player" placeholder="Player.." value=player)
+        td: label(for='player') Player:
+        td: input(type='text' id='player' name='player' placeholder='Player..' value=player)
 
       tr
-        td: label(for="team") Team:
-        td: input(type="text" id="tea" name="tea" placeholder="Team..." value=team)
+        td: label(for='team') Team:
+        td: input(type='text' id='team' name='team' placeholder='Team...' value=team)
 
       tr
-        td: label(for="author") Author:
-        td: input(type="text" id="author" name="author" placeholder="Tweet Author..." value=author)
+        td: label(for='author') Author:
+        td: input(type='text' id='author' name='author' placeholder='Tweet Author...' value=author)
 
+      // TODO change appearance to labelled sliding button
       tr
-        td: label(for="cacheonly") Only Use Cached Tweets
-        td: input(type="checkbox" id="cacheonly" name="cacheonly")
+        td: label(for='querymode') Query Mode (AND / OR)
+        td: input(type='checkbox' id='querymode' name='querymode')
+
+      //-
+        // TODO cached tweets should be used on retrieval instead - can't populate a search otherwise
+        tr
+          td: label(for='cacheonly') Only Use Cached Tweets
+          td: input(type='checkbox' id='cacheonly' name='cacheonly')
 
       tr
         td &nbsp;
-        td: input#submitSearchForm(type="submit")
+        td: input#submitSearchForm(type='submit')

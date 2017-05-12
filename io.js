@@ -16,10 +16,12 @@ module.exports = function (io) {
     var q = null;
 
     // First retrieve from local db, this will be the fastest
+    /*
     socket.on('join', function (client) {
-      console.log(client);
+      // console.log(client);
       q = client;
       // Check query isn't empty
+
       if (q.player || q.team || q.author) {
         // Initialise set to track existing ids (prevent duplicate tweets)
         var existingIds = new Set();
@@ -98,14 +100,14 @@ module.exports = function (io) {
           }
         });
 
-      // disconnect socket
+      // check disconnected socket
         socket.on('disconnect', function () {
           console.log('User disconnected.');
         // currentSockets--;
           tweetStream.stop();
         });
       }
-    });
+    });*/
   });
 };
 
