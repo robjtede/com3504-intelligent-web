@@ -1,0 +1,61 @@
+header {
+  background-color: #294F6D;
+  color: white;
+  padding-top: 5px;
+  margin-top: 10px:
+}
+body {
+  background-color: #49677E;
+}
+.tweet {
+  background-color: #294F6D;
+  padding-left: 10px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  padding-right: 10px;
+  margin-bottom: 8px;
+}
+#tweetcount{
+  background-color: #002266;
+  color: white;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+}
+#tweetlist{
+  padding-top: 10px;
+  margin: 0 auto;
+  max-width: 1000px;
+}
+#myChart{
+background-color: white;
+margin-top: 20px;
+margin-left: 20px;
+margin-bottom: 20px;
+
+}
+
+label{
+  padding-left: 40px;
+}
+#searchform{
+  width: 300px;
+  text-align: right;
+}
+input{
+  margin-left: 5px;
+  margin-bottom: 15px;
+}
+nav{
+  padding-bottom: 1px;
+}
+
+.tweet {
+  border: 0 solid red;
+
+  transition: border 1s ease
+}
+
+.tweet:first-child {
+  border-width: 2px;
+}
