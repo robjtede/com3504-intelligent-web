@@ -1,0 +1,11 @@
+extends ../layout
+
+block main
+  h1 All Trackings
+
+  div.trackings-list
+    for tracking in trackings
+      div.tracking(onclick="window.location='/trackings/show/" + tracking.id + "'")
+        div.tracking-player= tracking.player
+        div.tracking-team= tracking.team
+        div.tracking-author= tracking.author

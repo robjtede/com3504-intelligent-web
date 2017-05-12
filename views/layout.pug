@@ -8,11 +8,13 @@ html
       script(src="/socket.io/socket.io.js")
       script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js")
       script(src="/scripts/socketclient.js")
-      
 
   body
-    include header
+    div.col
+      include header
 
-    block main
+      if trackings
+        include recent-trackings
 
-    include footer
+    div.col
+      block main

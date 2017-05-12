@@ -10,6 +10,13 @@ app.set('view engine', 'pug');
 app.use(express.static('./public')); // Static file serving
 
 require('./routes/index')(app); // Express routing
+require('./routes/trackings')(app); // Express routing
+// 404
+app.use(function (req, res, next) {
+  var reqError = new Error('Page Not Found');
+  reqError.status = 404;
+  res.render('404');
+});
 
 // Start server
 var port = process.env.PORT || 3000;
