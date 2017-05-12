@@ -6,7 +6,7 @@ var querystring = require('querystring'); // Query parsing
 module.exports = function (app) {
   app.get('/trackings/new/submit', create);
   app.get('/trackings/new', newTrack);
-  app.get('/trackings/:id', show);
+  app.get('/trackings/show/:id', show);
   app.post('/trackings', list);
   app.get('/trackings', list);
 };

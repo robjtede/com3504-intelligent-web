@@ -4,22 +4,33 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   var socket = io.connect();
+  /*
   var checkbox = document.getElementById('cacheonly');
   checkbox.checked = window.localStorage.useCache;
-
   checkbox.addEventListener('change', function (ev) {
     window.localStorage.useCache = checkbox.checked;
   });
+  */
 
   socket.on('connect', function () {
     console.log('connected', socket.id);
     // Send query
-    socket.emit('join', {
+    var pathname = window.location.pathname;
+
+    if (pathname.substring(0, 16) === '/trackings/show/') {
+      var trackIdStr = pathname.substring(16);
+      var trackId = parseInt(trackIdStr);
+      socket.emit('join', {
+      /*
       player: document.querySelector('#player').value,
       team: document.querySelector('#team').value,
       author: document.querySelector('#author').value,
       cacheOnly: window.localStorage.useCache
-    });
+      */
+        path: pathname,
+        trackingId: trackId
+      });
+    }
   });
 
   // Got socket of tweets from database

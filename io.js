@@ -16,9 +16,10 @@ module.exports = function (io) {
     var q = null;
 
     // First retrieve from local db, this will be the fastest
-    /*
     socket.on('join', function (client) {
-      // console.log(client);
+      console.log('Socket joined!');
+      console.log(client);
+      /*
       q = client;
       // Check query isn't empty
 
@@ -106,8 +107,8 @@ module.exports = function (io) {
         // currentSockets--;
           tweetStream.stop();
         });
-      }
-    });*/
+      }*/
+    });
   });
 };
 
