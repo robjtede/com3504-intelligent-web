@@ -17,8 +17,9 @@ module.exports = function (io) {
     socket.on('join', function (client) {
       console.log('Socket joined!');
       console.log(client);
+      var trackId = client.trackingId;
 
-      sql.getSearchFromId(client.trackingId, function (results) {
+      sql.getSearchFromId(trackId, function (results) {
         console.log(results);
         var q = results[0];
         if (q) {
@@ -27,7 +28,7 @@ module.exports = function (io) {
           var existingIds = new Set();
 
           // Get stored tweets
-          sql.getTweets(client.trackingId, function (results) {
+          sql.getTweets(trackId, function (results) {
             socket.emit('cachedTweets', results); // Send tweets to client
             // Send frequencies to client
             socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
@@ -41,9 +42,10 @@ module.exports = function (io) {
           twitter
           .search(q)
           .then(function (data) {
-            // TODO update max tweet of tracking
             // Filter duplicates from data, add new tweet ids to existing set
-            var fltData = data.filter(function (elem) {
+            var maxTweetId = data.maxTweetId;
+            if (maxTweetId) sql.updateSearchNewestTweet(trackId, maxTweetId);
+            var fltData = data.tweets.filter(function (elem) {
               if (!existingIds.contains(elem.tweet_id)) {
                 existingIds.add(elem.tweet_id);
                 // console.log('REMOTE - Unique: ', elem.tweet_id);
@@ -56,7 +58,7 @@ module.exports = function (io) {
             // Send dates to page
             socket.emit('getRemoteTweets', fltData);
             // Insert new tweets into database
-            sql.insertTweetMulti(fltData, client.trackingId);
+            sql.insertTweetMulti(fltData, trackId);
             // count per day frequency
             socket.emit('getTweetFrequency', fltData.reduce(groupTweet, {}));
           });
@@ -80,7 +82,7 @@ module.exports = function (io) {
             if (!existingIds.contains(formattedTweet.tweet_id)) {
               console.log('STREAM - Unique: ', formattedTweet.tweet_id);
                 // Insert into db
-              sql.insertTweetSingle(formattedTweet, client.trackingId);
+              sql.insertTweetSingle(formattedTweet, trackId);
               // TODO update max id of search
 
                 // Send tweet to page
