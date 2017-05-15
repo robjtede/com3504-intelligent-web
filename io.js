@@ -44,6 +44,7 @@ module.exports = function (io) {
           .then(function (data) {
             // Filter duplicates from data, add new tweet ids to existing set
             var maxTweetId = data.maxTweetId;
+            // Add max tweet id to search / tracking
             if (maxTweetId) sql.updateSearchNewestTweet(trackId, maxTweetId);
             var fltData = data.tweets.filter(function (elem) {
               if (!existingIds.contains(elem.tweet_id)) {
@@ -83,7 +84,8 @@ module.exports = function (io) {
               console.log('STREAM - Unique: ', formattedTweet.tweet_id);
                 // Insert into db
               sql.insertTweetSingle(formattedTweet, trackId);
-              // TODO update max id of search
+              // update max id of search
+              sql.updateSearchNewestTweet(trackId, formattedTweet.tweet_id);
 
                 // Send tweet to page
               socket.emit('streamedTweet', formattedTweet);
