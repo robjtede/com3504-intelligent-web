@@ -73,6 +73,18 @@ module.exports = function (io) {
       }
     });
 
+    // Get list of every tracking present in database.
+    // Note: a tracking's id can be used passed into the client's "trackingId"
+    //        field for the socket "join" event to get its tweets
+    socket.on('getTrackingsList', function (client) {
+      sql.getTrackingsList(function (results) {
+        if (results[0]) {
+          // Has results
+          socket.emit('serverTrackingsList', results);
+        }
+      });
+    });
+
     // Standard client connection
     socket.on('join', function (client) {
       console.log('Socket joined!');
