@@ -31,7 +31,7 @@ function create (req, res) {
     }
     sql.newSearch(q, isAndMode, function (id) {
       console.log(id);
-      // TODO redirect to new tracking view
+      // redirect to new tracking view
       res.redirect('/trackings/show/' + id);
     });
     /*

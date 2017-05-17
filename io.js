@@ -60,12 +60,17 @@ module.exports = function (io) {
 
     // Add new tracking
     socket.on('newTracking', function (client) {
-      console.log(client);
-      // TODO get isAndMode
-      var isAndMode = false;
-      sql.newTracking(client, isAndMode, function (searchId) {
-
-      });
+      // Read client's input data
+      // Note: isAnd refers to the checkbox for AND/OR mode
+      //       - enabled = AND, OR otherwise (including if no field present)
+      if (client.player || client.team || client.author) {
+        console.log(client);
+        var isAndMode = false;
+        if (client.isAnd) isAndMode = true;
+        sql.newTracking(client, isAndMode, function (searchId) {
+          console.log('Tracking ID created or existing found: ' + searchId);
+        });
+      }
     });
 
     // Standard client connection
