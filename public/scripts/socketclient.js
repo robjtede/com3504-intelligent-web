@@ -4,6 +4,22 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   var socket = io.connect();
+  var pathname = window.location.pathname;
+
+  var getRemoteButton = document.getElementById('remoteTweetsButton');
+  if (getRemoteButton) {
+    getRemoteButton.addEventListener('click', function () {
+      if (pathname.substring(0, 16) === '/trackings/show/') {
+        var trackIdStr = pathname.substring(16);
+        var trackId = parseInt(trackIdStr);
+        socket.emit('requestRemoteTweets', {
+          path: pathname,
+          trackingId: trackId
+        });
+        getRemoteButton.style.display = 'none';
+      }
+    });
+  }
   /*
   var checkbox = document.getElementById('cacheonly');
   checkbox.checked = window.localStorage.useCache;
@@ -15,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
   socket.on('connect', function () {
     console.log('connected', socket.id);
     // Send query
-    var pathname = window.location.pathname;
 
     if (pathname.substring(0, 16) === '/trackings/show/') {
       var trackIdStr = pathname.substring(16);

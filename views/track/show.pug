@@ -9,6 +9,9 @@ append scripts
     script!= "window.mode = \"" + search.mode + "\""
 
 block main
+  div#remoteTweetsButton
+    p Get Remote Tweets
+
   canvas#myChart(width="1200" height="400")
 
   div#tweetCount
