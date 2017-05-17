@@ -24,20 +24,22 @@ function create (req, res) {
     console.log(q);
     if (q.player || q.team || q.author) {
       // TODO change to switch button
-      if (q.modetoggle) {
+      var isAndMode = false;
+      if (q.querymode) {
         console.log('Mode: AND');
+        isAndMode = true;
       } else {
         console.log('Mode: OR');
       }
 
       // Check if search present in database, for max id referencing.
-      sql.getSearch(q, function (results) {
+      sql.getSearch(q, isAndMode, function (results) {
         console.log('Old searches:');
         console.log(results);
         if (results.length === 0) {
           // No existing search exists, make a new one
           // TODO implement "isAnd" boolean according to checkbox
-          sql.addSearch(q.player, q.team, q.author, true, function (newResults) {
+          sql.addSearch(q.player, q.team, q.author, isAndMode, function (newResults) {
             console.log('New search created!');
             console.log('New Search ID: ' + newResults.insertId);
           });
