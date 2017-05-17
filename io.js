@@ -67,7 +67,7 @@ module.exports = function (io) {
         console.log(client);
         var isAndMode = false;
         if (client.isAnd) isAndMode = true;
-        sql.newSearch(client, isAndMode, function (searchId) {
+        sql.newTracking(client, isAndMode, function (searchId) {
           console.log('Tracking ID created or existing found: ' + searchId);
         });
       }
