@@ -7,13 +7,73 @@ var sql = require('./lib/sql');
 
 var currentSockets = 0;
 
+function getCachedTweets (socket, trackingId, existIds) {
+  // Get stored tweets
+  sql.getTweets(trackingId, function (results) {
+    socket.emit('cachedTweets', results); // Send tweets to client
+    // Send frequencies to client
+    socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
+    for (var ind in results) {
+      // console.log('LOCAL  - Added: ', results[ind].tweet_id);
+      existIds.add(results[ind].tweet_id); // Add id to existing ids
+    }
+  });
+  return existIds;
+}
+
+function getRemoteTweets (socket, q, trackingId, existIds) {
+  twitter
+  .search(q)
+  .then(function (data) {
+    // Filter duplicates from data, add new tweet ids to existing set
+    var maxTweetId = data.maxTweetId;
+    // Add max tweet id to search / tracking
+    if (maxTweetId) sql.updateSearchNewestTweet(trackingId, maxTweetId);
+    var fltData = data.tweets.filter(function (elem) {
+      if (!existIds.contains(elem.tweet_id)) {
+        existIds.add(elem.tweet_id);
+        // console.log('REMOTE - Unique: ', elem.tweet_id);
+        return true;
+      } else {
+        // console.log('REMOTE - Existing: ', elem.tweet_id);
+        return false;
+      }
+    });
+    // Send dates to page
+    socket.emit('getRemoteTweets', fltData);
+    // Insert new tweets into database
+    sql.insertTweetMulti(fltData, trackingId);
+    // count per day frequency
+    socket.emit('getTweetFrequency', fltData.reduce(groupTweet, {}));
+    return existIds;
+  }).catch(function (err) {
+    console.log('Error in obtaining tweets.');
+    console.error(err);
+  });
+}
+
 // Socket connection
 module.exports = function (io) {
   io.on('connection', function (socket) {
     // console.log(++currentSockets + ' users connected.... new connect: ' + socket.id);
     console.log('new connection: ' + socket.id);
 
-    // First retrieve from local db, this will be the fastest
+    // Add new tracking
+    socket.on('newTracking', function (client) {
+      // Read client's input data
+      // Note: isAnd refers to the checkbox for AND/OR mode
+      //       - enabled = AND, OR otherwise (including if no field present)
+      if (client.player || client.team || client.author) {
+        console.log(client);
+        var isAndMode = false;
+        if (client.isAnd) isAndMode = true;
+        sql.newTracking(client, isAndMode, function (searchId) {
+          console.log('Tracking ID created or existing found: ' + searchId);
+        });
+      }
+    });
+
+    // Standard client connection
     socket.on('join', function (client) {
       console.log('Socket joined!');
       console.log(client);
@@ -27,52 +87,18 @@ module.exports = function (io) {
           // Initialise set to track existing ids (prevent duplicate tweets)
           var existingIds = new Set();
 
-          // Get stored tweets
-          sql.getTweets(trackId, function (results) {
-            socket.emit('cachedTweets', results); // Send tweets to client
-            // Send frequencies to client
-            socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
-            for (var ind in results) {
-              // console.log('LOCAL  - Added: ', results[ind].tweet_id);
-              existingIds.add(results[ind].tweet_id); // Add id to existing ids
-            }
-          });
+          // Get tweets from database
+          existingIds = getCachedTweets(socket, trackId, existingIds);
 
           // Now retrieve more tweets from twitter, and add to page
-          twitter
-          .search(q)
-          .then(function (data) {
-            // Filter duplicates from data, add new tweet ids to existing set
-            var maxTweetId = data.maxTweetId;
-            // Add max tweet id to search / tracking
-            if (maxTweetId) sql.updateSearchNewestTweet(trackId, maxTweetId);
-            var fltData = data.tweets.filter(function (elem) {
-              if (!existingIds.contains(elem.tweet_id)) {
-                existingIds.add(elem.tweet_id);
-                // console.log('REMOTE - Unique: ', elem.tweet_id);
-                return true;
-              } else {
-                // console.log('REMOTE - Existing: ', elem.tweet_id);
-                return false;
-              }
-            });
-            // Send dates to page
-            socket.emit('getRemoteTweets', fltData);
-            // Insert new tweets into database
-            sql.insertTweetMulti(fltData, trackId);
-            // count per day frequency
-            socket.emit('getTweetFrequency', fltData.reduce(groupTweet, {}));
-          }).catch(function (err) {
-            console.log('Error in obtaining tweets.');
-            console.error(err);
-          });
-
-          // Start streaming tweets
-          // Now listen to stream, adding to page as received
+          existingIds = getRemoteTweets(socket, q, trackId, existingIds);
 
           // TODO fix issue of too many tweets crashing page, perhaps just limit amount streamedTweet
           // disabled streaming until fixed for stability (eg streaming "please" crashes page)
+
           /*
+          // Start streaming tweets
+          // Now listen to stream, adding to page as received
           var tweetStream = twitter.stream(q);
 
           tweetStream.on('tweet', function (tweet) {
