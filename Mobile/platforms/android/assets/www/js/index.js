@@ -166,7 +166,7 @@ function makeTweetDiv (tweet) {
 
 function submitSearchForm() {
 	console.log('submit');
-	socket.emit('join', {
+	socket.emit('newTracking', {
       player: document.getElementById('mobileplayer').value,
       team: document.getElementById('mobileteam').value,
       author: document.getElementById('mobileauthor').value
