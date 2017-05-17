@@ -16,7 +16,7 @@
 	<script src="js/socket.io.js"></script>
 	<script src="js/index.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
-	<!--<script src="js/socketclient.js"></script>-->
+	
 </head>
 <body>
 
@@ -25,33 +25,35 @@
             <p class="event listening">Connecting to Device</p>
             <p class="event received">Device is Ready</p>
         </div>
-		<header>
-			<h1>Football Search</h1>
-			<nav><p>Search: (use commas to separate terms)</p>
-				<form id="searchForm">
-					<label for="player">Player:</label>
-					<input type="text" id="mobileplayer" name="mobileplayer" placeholder="Player.."/>
-					<br/>
-					<label for="team">Team:</label><input type="text" id="mobileteam" name="mobileteam" placeholder="Team..."/>
-					<br/>
-					<label for="author">Author:</label><input type="text" id="mobileauthor" name="mobileauthor" placeholder="Tweet Author..."/>
-										
-					<br/><button type="button" id="submitSearchForm">Submit</button>
-				</form>
-			</nav>
-		</header>
 		<div class="tab">
-				<button class="tablinks" onclick="openTab(event, 'Tweets')">Tweets</button>
-				<button class="tablinks" onclick="openTab(event, 'Frequency')">Frequency</button>
+				<button class="tablinks" onclick="openTab(event, 'Trackings')">Trackings</button>
+				<button class="tablinks" onclick="openTab(event, 'Search')" id="defaultOpen">Search</button>
+		</div>
+		<div id="Tracking" class="tabcontent">
+			
 		</div>
 
-		<div id="Tweets" class="tabcontent">
-			<h3>Tweets</h3>
-		</div>
-
-		<div id="Frequency" class="tabcontent">
+		<div id="Search" class="tabcontent">
+			
+			<header>
+				<h1>Football Search</h1>
+				<nav><p>Search: (use commas to separate terms)</p>
+					<form id="searchForm">
+						<label for="player">Player:</label>
+						<input type="text" id="mobileplayer" name="mobileplayer" placeholder="Player.."/>
+						<br/>
+						<label for="team">Team:</label><input type="text" id="mobileteam" name="mobileteam" placeholder="Team..."/>
+						<br/>
+						<label for="author">Author:</label><input type="text" id="mobileauthor" name="mobileauthor" placeholder="Tweet Author..."/>
+											
+						<br/><button type="button" id="submitSearchForm">Submit</button>
+					</form>
+				</nav>
+			</header>
+			
 			<h3>Frequency</h3>
 			<canvas id="myChart" width="1200" height="400"></canvas><div id="tweetCount"></div><div id="tweetList"></div>
+			
 		</div>
 		<footer></footer>
 	</div>
