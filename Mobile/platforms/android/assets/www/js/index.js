@@ -38,36 +38,29 @@ var app = {
 
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:none;');
-
+		
         console.log('Received Event: ' + id);
+		
+		document.getElementById("submitSearchForm").addEventListener("click", submitSearchForm);
     }
 };
 
 app.initialize();
 
-//document.addEventListener('deviceready', function () {
-//	var socket = io.connect('http://10.0.2.2:3000');
-//});
+var socket = io.connect('http://10.0.2.2:3000');
 
 document.addEventListener('deviceready', function () {
-  var socket = io.connect('http://10.0.2.2:3000');
-  var checkbox = document.getElementById('cacheonly');
-  checkbox.checked = window.localStorage.useCache;
-
-  checkbox.addEventListener('change', function (ev) {
-    window.localStorage.useCache = checkbox.checked;
-  });
+  
+  
 
   socket.on('connect', function () {
     console.log('connected', socket.id);
     // Send query
-    socket.emit('join', {
-      player: document.querySelector('#player').value,
-      team: document.querySelector('#team').value,
-      author: document.querySelector('#author').value,
-      cacheOnly: window.localStorage.useCache
-    });
+    
   });
+  
+  
+  
 
   // Got socket of tweets from database
   socket.on('cachedTweets', function (data) {
@@ -169,4 +162,34 @@ function makeTweetDiv (tweet) {
           '<p>' + tweet.content + '</p>' +
             '</div>';
   return newDiv;
+}
+
+function submitSearchForm() {
+	console.log('submit');
+	socket.emit('join', {
+      player: document.getElementById('mobileplayer').value,
+      team: document.getElementById('mobileteam').value,
+      author: document.getElementById('mobileauthor').value
+    });
+}
+
+function openTab(evt, TabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(TabName).style.display = "block";
+    evt.currentTarget.className += " active";
 }

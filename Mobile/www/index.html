@@ -7,11 +7,11 @@
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport"
           content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <!--<link rel="stylesheet" type="text/css" href="css/index.css">-->
     <title>DB</title>
 	
 	<link rel="stylesheet" href="css/normalize.css"/>
-	<link rel="stylesheet" href="css/style.css"/>
+	<link rel="stylesheet" href="css/mobilestyle.css"/>
 	<script src="cordova.js"></script>
 	<script src="js/socket.io.js"></script>
 	<script src="js/index.js"></script>
@@ -19,31 +19,41 @@
 	<!--<script src="js/socketclient.js"></script>-->
 </head>
 <body>
-<header>
+
 	<div class="app">
         <div id="deviceready" class="blink">
             <p class="event listening">Connecting to Device</p>
             <p class="event received">Device is Ready</p>
         </div>
-    
-	<h1>Football Search</h1>
-	<nav><p>Search: (use commas to separate terms)</p>
-		<form id="searchForm">
-			<label for="player">Player:</label>
-			<input type="text" id="player" name="player" placeholder="Player.."/>
-			<br/>
-			<label for="team">Team:</label><input type="text" id="team" name="team" placeholder="Team..."/>
-			<br/>
-			<label for="author">Author:</label><input type="text" id="author" name="author" placeholder="Tweet Author..."/>
-			<br/>
-			<label for="cacheonly">Only Use Cached Tweets</label>
-			<input type="checkbox" id="cacheonly" name="cacheonly"/>
-			<br/><input id="submitSearchForm" type="submit"/>
-		</form>
-	</nav>
-</header>
-<canvas id="myChart" width="1200" height="400"></canvas><div id="tweetCount"></div><div id="tweetList"></div>
-<footer></footer>
-</div>
+		<header>
+			<h1>Football Search</h1>
+			<nav><p>Search: (use commas to separate terms)</p>
+				<form id="searchForm">
+					<label for="player">Player:</label>
+					<input type="text" id="mobileplayer" name="mobileplayer" placeholder="Player.."/>
+					<br/>
+					<label for="team">Team:</label><input type="text" id="mobileteam" name="mobileteam" placeholder="Team..."/>
+					<br/>
+					<label for="author">Author:</label><input type="text" id="mobileauthor" name="mobileauthor" placeholder="Tweet Author..."/>
+										
+					<br/><button type="button" id="submitSearchForm">Submit</button>
+				</form>
+			</nav>
+		</header>
+		<div class="tab">
+				<button class="tablinks" onclick="openTab(event, 'Tweets')">Tweets</button>
+				<button class="tablinks" onclick="openTab(event, 'Frequency')">Frequency</button>
+		</div>
+
+		<div id="Tweets" class="tabcontent">
+			<h3>Tweets</h3>
+		</div>
+
+		<div id="Frequency" class="tabcontent">
+			<h3>Frequency</h3>
+			<canvas id="myChart" width="1200" height="400"></canvas><div id="tweetCount"></div><div id="tweetList"></div>
+		</div>
+		<footer></footer>
+	</div>
 </body>
 </html>
