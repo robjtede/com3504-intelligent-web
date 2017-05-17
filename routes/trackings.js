@@ -29,7 +29,7 @@ function create (req, res) {
     } else {
       console.log('Mode: OR');
     }
-    sql.newSearch(q, isAndMode, function (id) {
+    sql.newTracking(q, isAndMode, function (id) {
       console.log(id);
       // redirect to new tracking view
       res.redirect('/trackings/show/' + id);
