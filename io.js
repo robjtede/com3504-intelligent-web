@@ -58,7 +58,17 @@ module.exports = function (io) {
     // console.log(++currentSockets + ' users connected.... new connect: ' + socket.id);
     console.log('new connection: ' + socket.id);
 
-    // First retrieve from local db, this will be the fastest
+    // Add new tracking
+    socket.on('newTracking', function (client) {
+      console.log(client);
+      // TODO get isAndMode
+      var isAndMode = false;
+      sql.newTracking(client, isAndMode, function (searchId) {
+
+      });
+    });
+
+    // Standard client connection
     socket.on('join', function (client) {
       console.log('Socket joined!');
       console.log(client);
@@ -78,12 +88,12 @@ module.exports = function (io) {
           // Now retrieve more tweets from twitter, and add to page
           existingIds = getRemoteTweets(socket, q, trackId, existingIds);
 
-          // Start streaming tweets
-          // Now listen to stream, adding to page as received
-
           // TODO fix issue of too many tweets crashing page, perhaps just limit amount streamedTweet
           // disabled streaming until fixed for stability (eg streaming "please" crashes page)
+
           /*
+          // Start streaming tweets
+          // Now listen to stream, adding to page as received
           var tweetStream = twitter.stream(q);
 
           tweetStream.on('tweet', function (tweet) {

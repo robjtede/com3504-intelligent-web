@@ -20,38 +20,42 @@ function create (req, res) {
 
   var q = req.query;
 
-  if (q) {
-    console.log(q);
-    if (q.player || q.team || q.author) {
+  if (q.player || q.team || q.author) {
       // TODO change to switch button
-      var isAndMode = false;
-      if (q.querymode) {
-        console.log('Mode: AND');
-        isAndMode = true;
-      } else {
-        console.log('Mode: OR');
-      }
-
-      // Check if search present in database, for max id referencing.
-      sql.getSearch(q, isAndMode, function (results) {
-        console.log('Old searches:');
-        console.log(results);
-        if (results.length === 0) {
-          // No existing search exists, make a new one
-          // TODO implement "isAnd" boolean according to checkbox
-          sql.addSearch(q.player, q.team, q.author, isAndMode, function (newResults) {
-            console.log('New search created!');
-            console.log('New Search ID: ' + newResults.insertId);
-          });
-        } else {
-          // Existing search exists
-          // TODO handle this issue
-        }
-      });
+    var isAndMode = false;
+    if (q.querymode) {
+      console.log('Mode: AND');
+      isAndMode = true;
+    } else {
+      console.log('Mode: OR');
     }
+    sql.newSearch(q, isAndMode, function (id) {
+      console.log(id);
+      // TODO redirect to new tracking view
+      res.redirect('/trackings/show/' + id);
+    });
+    /*
+    // Check if search present in database, for max id referencing.
+    sql.getSearch(q, isAndMode, function (results) {
+      console.log('Old searches:');
+      console.log(results);
+      if (results.length === 0) {
+        // No existing search exists, make a new one
+        // TODO implement "isAnd" boolean according to checkbox
+        sql.addSearch(q.player, q.team, q.author, isAndMode, function (newResults) {
+          console.log('New search created!');
+          console.log('New Search ID: ' + newResults.insertId);
+        });
+      } else {
+        // Existing search exists
+        // TODO handle this issue
+      }
+    });
+    */
+  } else {
+    // Invalid query
+    res.redirect('/trackings');
   }
-  // TODO redirect to specific new tracking on success instead
-  res.redirect('/trackings');
 }
 
 function list (req, res) {
