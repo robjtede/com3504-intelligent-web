@@ -176,3 +176,10 @@ nav a:hover {
 .tweet:first-child {
   border-width: 2px;
 }
+
+#remoteTweetsButton {
+  background-color: hsl(0, 70%, 45%);
+  color: #FFFFFF;
+  cursor:pointer;
+  padding: 4px;
+}
