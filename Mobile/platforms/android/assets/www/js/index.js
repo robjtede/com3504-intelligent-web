@@ -222,11 +222,15 @@ function openTab(evt, TabName) {
     evt.currentTarget.className += " active";
 	
 	document.getElementById('ResultsTab').innerHTML = "";
+	socket.emit('disconnectCordova', {});
 }
 
 function openResults(id) {
 	document.getElementById('tweetList').innerHTML = '';
 	socket.emit('join', {
+        trackingId: id
+    });
+	socket.emit('requestRemoteTweets', {
         trackingId: id
     });
 	openTab(event, 'Results');

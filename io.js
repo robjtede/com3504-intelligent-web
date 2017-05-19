@@ -115,13 +115,22 @@ module.exports = function (io) {
             // currentSockets--;
             tweetStream.stop();
           });
+		  
+		  socket.on('disconnectCordova', function () {
+            console.log('User disconnected.');
+            // currentSockets--;
+            tweetStream.stop();
+          });
+		  
         } else {
           // No tracking found
           // TODO handle
         }
       });
     });
-
+	
+	
+	
     // Standard client connection
     socket.on('join', function (client) {
       console.log('Socket joined!');
