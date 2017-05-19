@@ -8,7 +8,7 @@ body {
   background-color: #49677E;
 }
 .tweet {
-  background-color: #294F6D;
+  background-color: #42ebf4;
   padding-left: 10px;
   padding-bottom: 6px;
   padding-top: 6px;
@@ -23,6 +23,7 @@ body {
   padding-left: 5px;
 }
 #tweetlist{
+  background-color: #42ebf4;
   padding-top: 10px;
   margin: 0 auto;
   max-width: 1000px;
@@ -96,7 +97,7 @@ div.tab button.active {
     border-top: none;
 }
 .tracking {
-	background-color: #294F6D;
+	background-color: #42ebf4;
     border: 1px solid black;
     border-radius: 5px;
     padding: 0.6em 1em;

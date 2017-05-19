@@ -225,6 +225,7 @@ function openTab(evt, TabName) {
 }
 
 function openResults(id) {
+	document.getElementById('tweetList').innerHTML = '';
 	socket.emit('join', {
         trackingId: id
     });
