@@ -21,12 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var trackIdStr = pathname.substring(16);
       var trackId = parseInt(trackIdStr);
       socket.emit('join', {
-      /*
-      player: document.querySelector('#player').value,
-      team: document.querySelector('#team').value,
-      author: document.querySelector('#author').value,
-      cacheOnly: window.localStorage.useCache
-      */
+      
         path: pathname,
         trackingId: trackId
       });

@@ -95,3 +95,22 @@ div.tab button.active {
     border: 1px solid #ccc;
     border-top: none;
 }
+.tracking {
+	background-color: #294F6D;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 0.6em 1em;
+}
+
+.tracking-player::before {
+  content: 'Player: ';
+}
+
+.tracking-team::before {
+  content: 'Team: ';
+}
+
+.tracking-author::before {
+  content: 'Author: ';
+}
+

@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
     <!--<link rel="stylesheet" type="text/css" href="css/index.css">-->
-    <title>DB</title>
+    <title>Cordova app</title>
 	
 	<link rel="stylesheet" href="css/normalize.css"/>
 	<link rel="stylesheet" href="css/mobilestyle.css"/>
@@ -26,15 +26,16 @@
             <p class="event received">Device is Ready</p>
         </div>
 		<div class="tab">
-				<button class="tablinks" onclick="openTab(event, 'Trackings')">Trackings</button>
-				<button class="tablinks" onclick="openTab(event, 'Search')" id="defaultOpen">Search</button>
+				<button class="tablinks" onclick="openTab(event, 'Tracking')" id="defaultOpen">Trackings</button>
+				<button class="tablinks" onclick="openTab(event, 'Search')">Search</button>
+				<button class="tablinks" id="ResultsTab">Results</button>
 		</div>
+		
 		<div id="Tracking" class="tabcontent">
 			
 		</div>
 
 		<div id="Search" class="tabcontent">
-			
 			<header>
 				<h1>Football Search</h1>
 				<nav><p>Search: (use commas to separate terms)</p>
@@ -51,10 +52,16 @@
 				</nav>
 			</header>
 			
-			<h3>Frequency</h3>
+			<!--<h3>Frequency</h3>
 			<canvas id="myChart" width="1200" height="400"></canvas><div id="tweetCount"></div><div id="tweetList"></div>
-			
+			-->
 		</div>
+		
+		<div id="Results" class="tabcontent">
+			<div id="tweetCount"></div>
+			<div id="tweetList"></div>
+		<div>
+		
 		<footer></footer>
 	</div>
 </body>

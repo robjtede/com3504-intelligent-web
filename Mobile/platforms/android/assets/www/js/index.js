@@ -42,6 +42,7 @@ var app = {
         console.log('Received Event: ' + id);
 		
 		document.getElementById("submitSearchForm").addEventListener("click", submitSearchForm);
+		document.getElementById("defaultOpen").addEventListener("click", getTrackingsList);
     }
 };
 
@@ -105,9 +106,31 @@ document.addEventListener('deviceready', function () {
     addedTweet += makeTweetDiv(tweet);
     tweetsDiv.innerHTML = addedTweet + tweetsDiv.innerHTML;
   });
-
+  
+  socket.on('serverTrackingsList', function (results) {
+        if (results[0]) {
+          // Has results
+          console.log('has results')
+        }
+		var addTrackings = '';
+		for (var i in results){
+			addTrackings += '<div class="tracking" onclick="openResults(\'' + results[i].id + '\')">' +
+			'<div class="tracking-player">' + results[i].player + '</div>' +
+			'<div class="tracking-team">' + results[i].team + '</div>' +
+			'<div class="tracking-author">' + results[i].author + '</div>' +
+			'<div class="tracking-mode">or</div>' +
+			'</div>';
+		}
+		document.getElementById('Tracking').innerHTML = addTrackings;
+    });
+	
+  socket.on('NewTrackingID', function (tracking) {
+	  console.log('got new traking id');
+	  openResults(tracking.NewId);
+  });
+    
   socket.on('getTweetFrequency', function (data) {
-    console.log('got tweet frequency');
+    /*console.log('got tweet frequency');
     var ctx = document.getElementById('myChart').getContext('2d');
       // Creates and draws the line chart using the data
     var myChart = new Chart(ctx, {
@@ -149,7 +172,7 @@ document.addEventListener('deviceready', function () {
           }]
         }
       }
-    });
+    });*/
   });
 });
 
@@ -162,6 +185,11 @@ function makeTweetDiv (tweet) {
           '<p>' + tweet.content + '</p>' +
             '</div>';
   return newDiv;
+}
+
+function getTrackingsList() {
+	console.log('emitting get list request');
+	socket.emit('getTrackingsList');
 }
 
 function submitSearchForm() {
@@ -182,7 +210,7 @@ function openTab(evt, TabName) {
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
     }
-
+	
     // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
@@ -192,25 +220,20 @@ function openTab(evt, TabName) {
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(TabName).style.display = "block";
     evt.currentTarget.className += " active";
+	
+	document.getElementById('ResultsTab').innerHTML = "";
 }
 
-function openTab2(evt, TabName) {
-    // Declare all variables
-    var i, tabcontent, tablinks;
-
-    // Get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active2", "");
-    }
-
-    // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(TabName).style.display = "block";
-    evt.currentTarget.className += " active2";
+function openResults(id) {
+	socket.emit('join', {
+        trackingId: id
+    });
+	openTab(event, 'Results');
+	document.getElementById('ResultsTab').innerHTML = "Results";
+	
 }
+
+
+
+
+

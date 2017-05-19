@@ -69,7 +69,11 @@ module.exports = function (io) {
         if (client.isAnd) isAndMode = true;
         sql.newTracking(client, isAndMode, function (searchId) {
           console.log('Tracking ID created or existing found: ' + searchId);
+		  //socket.emit('NewTrackingID', {
+			//NewID: searchId
+		  //});
         });
+		
       }
     });
 
