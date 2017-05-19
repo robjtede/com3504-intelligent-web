@@ -18,24 +18,26 @@ function getCachedTweets (socket, trackingId) {
 
 function getRemoteTweets (socket, q, trackingId) {
   twitter
-  .search(q)
-  .then(function (data) {
-    // Filter duplicates from data, add new tweet ids to existing set
-    var maxTweetId = data.maxTweetId;
-    // Add max tweet id to search / tracking
-    if (maxTweetId) sql.updateSearchNewestTweet(trackingId, maxTweetId);
-    var tweets = data.tweets;
-    // Send dates to page
-    socket.emit('getRemoteTweets', tweets);
-    // Insert new tweets into database
-    sql.insertTweetMulti(tweets, trackingId);
-    // count per day frequency
-    socket.emit('getTweetFrequency', tweets.reduce(groupTweet, {}));
-    // return existIds;
-  }).catch(function (err) {
-    console.log('Error in obtaining tweets.');
-    console.error(err);
-  });
+    .search(q)
+    .then(function (data) {
+      console.log('remote tweets length', data);
+
+      // Filter duplicates from data, add new tweet ids to existing set
+      var maxTweetId = data.maxTweetId;
+      // Add max tweet id to search / tracking
+      if (maxTweetId) sql.updateSearchNewestTweet(trackingId, maxTweetId);
+      var tweets = data.tweets;
+      // Send dates to page
+      socket.emit('getRemoteTweets', tweets);
+      // Insert new tweets into database
+      sql.insertTweetMulti(tweets, trackingId);
+      // count per day frequency
+      socket.emit('getTweetFrequency', tweets.reduce(groupTweet, {}));
+      // return existIds;
+    }).catch(function (err) {
+      console.log('Error in obtaining tweets.');
+      console.error(err);
+    });
 }
 
 // Socket connection
