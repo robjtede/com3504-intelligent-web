@@ -4,6 +4,7 @@ var moment = require('moment');
 var Set = require('set');
 var twitter = require('./lib/twitter');
 var sql = require('./lib/sql');
+var dbp = require('./lib/dbpedia');
 
 var currentSockets = 0;
 
@@ -38,6 +39,10 @@ function getRemoteTweets (socket, q, trackingId) {
       console.log('Error in obtaining tweets.');
       console.error(err);
     });
+}
+
+function queryDBpedia (socket, q) {
+  dbp.findPlayer(q);
 }
 
 // Socket connection
@@ -146,6 +151,9 @@ module.exports = function (io) {
 
           // Get tweets from database
           getCachedTweets(socket, trackId);
+
+          // TODO query DBpedia
+          queryDBpedia(socket, q);
         } else {
           // No search, invalid id or error
           // TODO handle
