@@ -41,10 +41,6 @@ function getRemoteTweets (socket, q, trackingId) {
     });
 }
 
-function queryDBpedia (socket, q) {
-  dbp.findPlayer(q);
-}
-
 // Socket connection
 module.exports = function (io) {
   io.on('connection', function (socket) {
@@ -63,10 +59,9 @@ module.exports = function (io) {
         sql.newTracking(client, isAndMode, function (searchId) {
           console.log('Tracking ID created or existing found: ' + searchId);
 		  socket.emit('NewTrackingID', {
-			NewID: searchId
+    NewID: searchId
 		  });
         });
-		
       }
     });
 
@@ -153,7 +148,7 @@ module.exports = function (io) {
           getCachedTweets(socket, trackId);
 
           // TODO query DBpedia
-          queryDBpedia(socket, q);
+          dbp.findPlayer(socket, q);
         } else {
           // No search, invalid id or error
           // TODO handle

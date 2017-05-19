@@ -36,12 +36,24 @@ document.addEventListener('DOMContentLoaded', function () {
       var trackIdStr = pathname.substring(16);
       var trackId = parseInt(trackIdStr);
       socket.emit('join', {
-      
         path: pathname,
         trackingId: trackId
       });
     }
   });
+
+  // Add player profile info
+  var playerProfileDiv = document.getElementById('playerProfile');
+  if (playerProfileDiv) {
+    socket.on('playerProfile', function (profileData) {
+      var profileStr = '<div><p>' + profileData.name + '</p>' +
+                        '<p>' + profileData.club + '</p>' +
+                        '<p>' + profileData.position + '</p>' +
+                        '<img src="' + profileData.imgUrl + '"' +
+                        ' width="80px"> </div>';
+      playerProfileDiv.innerHTML = profileStr + playerProfileDiv.innerHTML;
+    });
+  }
 
   // Got socket of tweets from database
   socket.on('cachedTweets', function (data) {
