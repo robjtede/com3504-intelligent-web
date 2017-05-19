@@ -1,5 +1,7 @@
 'use strict';
 
+require('any-promise/register')('bluebird', {Promise: require('bluebird')});
+
 var express = require('express');
 var app = express(); // Express init
 
