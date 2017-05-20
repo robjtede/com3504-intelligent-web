@@ -1,18 +1,17 @@
 'use strict';
 
 var moment = require('moment');
-var Set = require('set');
 var twitter = require('./lib/twitter');
 var sql = require('./lib/sql');
 var dbp = require('./lib/dbpedia');
-
-var currentSockets = 0;
 
 function getCachedTweets (socket, trackingId) {
   // Get stored tweets
   sql.getTweets(trackingId)
     .then(function (results) {
-      socket.emit('cachedTweets', results); // Send tweets to client
+      // Send tweets to client
+      socket.emit('cachedTweets', results);
+
       // Send frequencies to client
       socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
     });
@@ -28,14 +27,16 @@ function getRemoteTweets (socket, q, trackingId) {
       // Add max tweet id to tracking
       if (maxTweetId) sql.updateSearchNewestTweet(trackingId, maxTweetId);
 
-      // Send dates to page
-      socket.emit('getRemoteTweets', tweets);
+      if (tweets.length) {
+        // Insert new tweets into database
+        sql.insertTweetMulti(tweets, trackingId);
 
-      // Insert new tweets into database
-      sql.insertTweetMulti(tweets, trackingId);
+        // Send dates to page
+        socket.emit('getRemoteTweets', tweets);
 
-      // count per day frequency
-      socket.emit('getTweetFrequency', tweets.reduce(groupTweet, {}));
+        // count per day frequency
+        socket.emit('getTweetFrequency', tweets.reduce(groupTweet, {}));
+      }
     }).catch(function (err) {
       console.error(err);
       throw new Error(err);
@@ -48,9 +49,9 @@ module.exports = function (io) {
     // Add new tracking
     socket.on('newTracking', function (client) {
       // Read client's input data
-      // Note: isAnd refers to the checkbox for AND/OR mode
-      //       - enabled = AND, OR otherwise (including if no field present)
       if (client.player || client.team || client.author) {
+        // isAnd refers to the checkbox for AND/OR mode
+        // enabled = AND, OR otherwise (including if no field present)
         var isAndMode = client.isAnd;
 
         sql.newTracking(client, isAndMode)
@@ -95,14 +96,14 @@ module.exports = function (io) {
             tweetStream.on('tweet', function (tweet) {
               // Format tweet for consistency
               var formattedTweet = {
-                tweet_id: tweet.id,
+                tweet_id: tweet.id_str,
                 author: tweet.user.screen_name,
                 datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
                 content: tweet.text
               };
 
               // Insert into db
-              sql.insertTweetSingle(formattedTweet, trackId);
+              sql.insertTweet(formattedTweet, trackId);
 
               // update max id of search
               sql.updateSearchNewestTweet(trackId, formattedTweet.tweet_id);

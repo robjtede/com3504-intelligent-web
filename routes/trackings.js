@@ -1,7 +1,6 @@
 'use strict';
 
 var sql = require('../lib/sql');
-var querystring = require('querystring'); // Query parsing
 
 module.exports = function (app) {
   app.get('/trackings/new/submit', create);
@@ -16,42 +15,19 @@ function newTrack (req, res) {
 }
 
 function create (req, res) {
-  // console.log(req.query);
-
   var q = req.query;
 
   if (q.player || q.team || q.author) {
-      // TODO change to switch button
-    var isAndMode = false;
-    if (q.querymode) {
-      console.log('Mode: AND');
-      isAndMode = true;
-    } else {
-      console.log('Mode: OR');
-    }
-    sql.newTracking(q, isAndMode, function (id) {
-      console.log(id);
-      // redirect to new tracking view
-      res.redirect('/trackings/show/' + id);
-    });
-    /*
-    // Check if search present in database, for max id referencing.
-    sql.getSearch(q, isAndMode, function (results) {
-      console.log('Old searches:');
-      console.log(results);
-      if (results.length === 0) {
-        // No existing search exists, make a new one
-        // TODO implement "isAnd" boolean according to checkbox
-        sql.addSearch(q.player, q.team, q.author, isAndMode, function (newResults) {
-          console.log('New search created!');
-          console.log('New Search ID: ' + newResults.insertId);
-        });
-      } else {
-        // Existing search exists
-        // TODO handle this issue
-      }
-    });
-    */
+    // TODO change to switch button
+    var isAndMode = q.querymode;
+
+    sql.newTracking(q, isAndMode)
+      .then(function (id) {
+        console.log(id);
+
+        // redirect to new tracking view
+        res.redirect('/trackings/show/' + id);
+      });
   } else {
     // Invalid query
     res.redirect('/trackings');
@@ -59,59 +35,33 @@ function create (req, res) {
 }
 
 function list (req, res) {
-  var db = sql.getConnection();
-
-  db.query(
-    'SELECT * FROM searches ORDER BY id DESC LIMIT 10',
-    function (err, results, fields) {
-      if (err) throw new Error(err);
-
-      db.query(
-        'SELECT * FROM searches ORDER BY id DESC',
-        function (err, results, fields) {
-          if (err) throw new Error(err);
-
-          res.render('track/list', {
-            trackings: results
-          });
-        }
-      );
-    }
-  );
+  return sql.query('SELECT * FROM searches ORDER BY id DESC')
+    .then(function (results) {
+      res.render('track/list', {
+        trackings: results
+      });
+    });
 }
 
 function show (req, res) {
-  var db = sql.getConnection();
+  var recentCache;
+  var search;
 
-  db.query(
-    'SELECT * FROM searches ORDER BY id DESC LIMIT 10',
-    function (err, trackings, fields) {
-      if (err) throw new Error(err);
-
-      db.query(
-        'SELECT * FROM searches WHERE id = ?',
-        [req.params.id],
-        function (err, search, fields) {
-          if (err) throw new Error(err);
-
-          console.log(search);
-
-          db.query(
-            'SELECT * FROM tweets WHERE searches_id = ?',
-            [req.params.id],
-            function (err, tweets, fields) {
-              if (err) throw new Error(err);
-
-              // Render page
-              res.render('track/show', {
-                trackings: trackings,
-                search: search[0],
-                tweets: tweets
-              });
-            }
-          );
-        }
-      );
-    }
-  );
+  return sql.query('SELECT * FROM searches ORDER BY id DESC LIMIT 10')
+    .then(function (recent) {
+      recentCache = recent;
+      return sql.query('SELECT * FROM searches WHERE id = ?', [req.params.id]);
+    })
+    .then(function (searches) {
+      search = searches[0];
+      return sql.query('SELECT * FROM tweets WHERE searches_id = ?', [req.params.id]);
+    })
+    .then(function (tweets) {
+      // Render page
+      res.render('track/show', {
+        trackings: recentCache,
+        search: search,
+        tweets: tweets
+      });
+    });
 };
