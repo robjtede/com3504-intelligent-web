@@ -1,72 +1,66 @@
 'use strict';
 
 var moment = require('moment');
-var Set = require('set');
 var twitter = require('./lib/twitter');
 var sql = require('./lib/sql');
 var dbp = require('./lib/dbpedia');
 
-var currentSockets = 0;
-
 function getCachedTweets (socket, trackingId) {
   // Get stored tweets
-  sql.getTweets(trackingId, function (results) {
-    socket.emit('cachedTweets', results); // Send tweets to client
-    // Send frequencies to client
-    socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
-  });
+  sql.getTweets(trackingId)
+    .then(function (results) {
+      // Send tweets to client
+      socket.emit('cachedTweets', results);
+
+      // Send frequencies to client
+      socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
+    });
 }
 
 function getRemoteTweets (socket, q, trackingId) {
   twitter
     .search(q)
     .then(function (data) {
-      console.log('remote tweets length', data);
-
-      // Filter duplicates from data, add new tweet ids to existing set
-      var maxTweetId = data.maxTweetId;
-      // Add max tweet id to search / tracking
-      if (maxTweetId) sql.updateSearchNewestTweet(trackingId, maxTweetId);
       var tweets = data.tweets;
-      // Send dates to page
-      socket.emit('getRemoteTweets', tweets);
-      // Insert new tweets into database
-      sql.insertTweetMulti(tweets, trackingId);
-      // count per day frequency
-      socket.emit('getTweetFrequency', tweets.reduce(groupTweet, {}));
-      // return existIds;
-    }).catch(function (err) {
-      console.log('Error in obtaining tweets.');
-      console.error(err);
-    });
-}
+      var maxTweetId = data.maxTweetId;
 
-function queryDBpedia (socket, q) {
-  dbp.findPlayer(q);
+      // Add max tweet id to tracking
+      if (maxTweetId) sql.updateSearchNewestTweet(trackingId, maxTweetId);
+
+      if (tweets.length) {
+        // Insert new tweets into database
+        sql.insertTweetMulti(tweets, trackingId);
+
+        // Send dates to page
+        socket.emit('getRemoteTweets', tweets);
+
+        // count per day frequency
+        socket.emit('getTweetFrequency', tweets.reduce(groupTweet, {}));
+      }
+    }).catch(function (err) {
+      console.error(err);
+      throw new Error(err);
+    });
 }
 
 // Socket connection
 module.exports = function (io) {
   io.on('connection', function (socket) {
-    // console.log(++currentSockets + ' users connected.... new connect: ' + socket.id);
-    console.log('new connection: ' + socket.id);
-
     // Add new tracking
     socket.on('newTracking', function (client) {
       // Read client's input data
-      // Note: isAnd refers to the checkbox for AND/OR mode
-      //       - enabled = AND, OR otherwise (including if no field present)
       if (client.player || client.team || client.author) {
-        console.log(client);
-        var isAndMode = false;
-        if (client.isAnd) isAndMode = true;
-        sql.newTracking(client, isAndMode, function (searchId) {
-          console.log('Tracking ID created or existing found: ' + searchId);
-		  socket.emit('NewTrackingID', {
-			NewID: searchId
-		  });
-        });
-		
+        // isAnd refers to the checkbox for AND/OR mode
+        // enabled = AND, OR otherwise (including if no field present)
+        var isAndMode = client.isAnd;
+
+        sql.newTracking(client, isAndMode)
+          .then(function (searchId) {
+            console.log('Tracking ID created or existing found: ' + searchId);
+            socket.emit('NewTrackingID', {
+              NewID: searchId
+            });
+          });
       }
     });
 
@@ -74,91 +68,90 @@ module.exports = function (io) {
     // Note: a tracking's id can be used passed into the client's "trackingId"
     //        field for the socket "join" event to get its tweets
     socket.on('getTrackingsList', function (client) {
-      sql.getTrackingsList(function (results) {
-        if (results[0]) {
-          // Has results
-          socket.emit('serverTrackingsList', results);
-        }
-      });
+      sql.getTrackingsList()
+        .then(function (results) {
+          if (results[0]) {
+            // Has results
+            socket.emit('serverTrackingsList', results);
+          }
+        });
     });
 
     socket.on('requestRemoteTweets', function (client) {
       var trackId = client.trackingId;
       console.log('SOCKET GET REMOTE WITH ID: ' + trackId);
-      sql.getSearchFromId(trackId, function (results) {
-        console.log(results);
-        var q = results[0];
-        if (q) {
-          // Now retrieve more tweets from twitter, and add to page
-          getRemoteTweets(socket, q, trackId);
-          // TODO fix issue of too many tweets crashing page, perhaps just limit amount of streamed tweets
 
-          // Start streaming tweets
-          // Now listen to stream, adding to page as received
-          var tweetStream = twitter.stream(q);
+      sql.getSearchFromId(trackId)
+        .then(function (results) {
+          var q = results[0];
+          if (q) {
+            // Now retrieve more tweets from twitter, and add to page
+            getRemoteTweets(socket, q, trackId);
+            // TODO fix issue of too many tweets crashing page, perhaps just limit amount of streamed tweets
 
-          tweetStream.on('tweet', function (tweet) {
-            // Format tweet for consistency
-            var formattedTweet = {
-              tweet_id: tweet.id,
-              author: tweet.user.screen_name,
-              datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
-              content: tweet.text
-            };
-            // Insert into db
-            sql.insertTweetSingle(formattedTweet, trackId);
-            // update max id of search
-            sql.updateSearchNewestTweet(trackId, formattedTweet.tweet_id);
+            // Start streaming tweets
+            // Now listen to stream, adding to page as received
+            var tweetStream = twitter.stream(q);
 
-            // Send tweet to page
-            socket.emit('streamedTweet', formattedTweet);
-          });
+            tweetStream.on('tweet', function (tweet) {
+              // Format tweet for consistency
+              var formattedTweet = {
+                tweet_id: tweet.id_str,
+                author: tweet.user.screen_name,
+                datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
+                content: tweet.text
+              };
 
-          // check disconnected socket
-          socket.on('disconnect', function () {
-            console.log('User disconnected.');
-            // currentSockets--;
-            tweetStream.stop();
-          });
-		  
-		  socket.on('disconnectCordova', function () {
-            console.log('User disconnected.');
-            // currentSockets--;
-            tweetStream.stop();
-          });
-		  
-        } else {
-          // No tracking found
-          // TODO handle
-        }
-      });
+              // Insert into db
+              sql.insertTweet(formattedTweet, trackId);
+
+              // update max id of search
+              sql.updateSearchNewestTweet(trackId, formattedTweet.tweet_id);
+
+              // Send tweet to page
+              socket.emit('streamedTweet', formattedTweet);
+            });
+
+            // check disconnected socket
+            socket.on('disconnect', function () {
+              console.log('User disconnected.');
+              tweetStream.stop();
+            });
+
+            socket.on('disconnectCordova', function () {
+              console.log('User disconnected.');
+              tweetStream.stop();
+            });
+          } else {
+            // No tracking found
+            // TODO handle
+          }
+        });
     });
-	
-	
-	
+
     // Standard client connection
     socket.on('join', function (client) {
       console.log('Socket joined!');
       console.log(client);
       var trackId = client.trackingId;
 
-      sql.getSearchFromId(trackId, function (results) {
-        console.log(results);
-        var q = results[0];
-        if (q) {
-          // Search found, start sending tweets to client
-          // Initialise set to track existing ids (prevent duplicate tweets)
+      sql.getSearchFromId(trackId)
+        .then(function (results) {
+          console.log(results);
+          var q = results[0];
+          if (q) {
+            // Search found, start sending tweets to client
+            // Initialise set to track existing ids (prevent duplicate tweets)
 
-          // Get tweets from database
-          getCachedTweets(socket, trackId);
+            // Get tweets from database
+            getCachedTweets(socket, trackId);
 
-          // TODO query DBpedia
-          queryDBpedia(socket, q);
-        } else {
-          // No search, invalid id or error
-          // TODO handle
-        }
-      });
+            dbp.findPlayer(socket, q);
+          } else {
+            // No search, invalid id or error
+            // TODO handle
+          }
+        });
     });
   });
 };
