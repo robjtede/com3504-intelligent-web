@@ -46,9 +46,8 @@ function getRemoteTweets (socket, q, trackingId) {
 // Socket connection
 module.exports = function (io) {
   io.on('connection', function (socket) {
-	  console.log('connected', socket.id);
-	  
-	  
+    console.log('connected', socket.id);
+
     // Add new tracking
     socket.on('newTracking', function (client) {
       // Read client's input data
@@ -59,7 +58,7 @@ module.exports = function (io) {
 
         sql.newTracking(client, isAndMode)
           .then(function (searchId) {
-            console.log('Tracking ID created or existing found: ' + searchId);
+            // console.log('Tracking ID created or existing found: ' + searchId);
             socket.emit('NewTrackingID', {
               NewID: searchId
             });
@@ -68,7 +67,7 @@ module.exports = function (io) {
     });
 
     // Get list of every tracking present in database.
-    // Note: a tracking's id can be used passed into the client's "trackingId"
+    // NOTE: a tracking's id can be used passed into the client's "trackingId"
     //        field for the socket "join" event to get its tweets
     socket.on('getTrackingsList', function (client) {
       sql.getTrackingsList()
@@ -122,7 +121,7 @@ module.exports = function (io) {
             });
 
             socket.on('disconnectCordova', function () {
-              //console.log('User disconnected.');
+              // console.log('User disconnected.');
               tweetStream.stop();
             });
           } else {
@@ -134,13 +133,11 @@ module.exports = function (io) {
 
     // Standard client connection
     socket.on('join', function (client) {
-      console.log('Socket joined!');
-      console.log(client);
       var trackId = client.trackingId;
 
       sql.getSearchFromId(trackId)
         .then(function (results) {
-          //console.log(results);
+          // console.log(results);
           var q = results[0];
           if (q) {
             // Search found, start sending tweets to client
