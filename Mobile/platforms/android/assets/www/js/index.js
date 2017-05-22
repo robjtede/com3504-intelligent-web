@@ -48,6 +48,7 @@ var app = {
 
 app.initialize();
 
+
 var socket = io.connect('http://10.0.2.2:3000');
 
 document.addEventListener('deviceready', function () {
@@ -78,7 +79,7 @@ document.addEventListener('deviceready', function () {
     }
 
     tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
-    tweetsCount.textContent = data.length;
+	tweetsCount.textContent = data.length;
   });
 
   // Got socket of tweets from get/search
@@ -96,6 +97,7 @@ document.addEventListener('deviceready', function () {
     }
     tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
     tweetsCount.textContent = parseInt(tweetsCount.textContent) + data.length;
+	tweetsCount.innerHTML = "Number of Tweets gathered: " + tweetsCount.textContent;
   });
 
   // Got socket of streamed tweet
@@ -128,7 +130,17 @@ document.addEventListener('deviceready', function () {
 	  console.log('got new traking id');
 	  openResults(tracking.NewId);
   });
-    
+  
+  socket.on('playerProfile', function (profileData) {
+		var profileStr = '<div><p>' + profileData.name + '</p>' +
+                        '<p>' + profileData.club + '</p>' +
+                        '<p>' + profileData.position + '</p>' +
+                        '<img src="' + profileData.imgUrl + '"' +
+                        ' width="80px"> </div>';
+		var playerProfileDiv = document.getElementById('playerProfile');
+		playerProfileDiv.innerHTML = profileStr + playerProfileDiv.innerHTML;
+  });
+  
   socket.on('getTweetFrequency', function (data) {
     /*console.log('got tweet frequency');
     var ctx = document.getElementById('myChart').getContext('2d');
@@ -224,6 +236,7 @@ function openTab(evt, TabName) {
 	
 	document.getElementById('ResultsTab').innerHTML = "";
 	socket.emit('disconnectCordova');
+	document.getElementById('playerProfile').innerHTML = "";
 }
 
 function openResults(id) {

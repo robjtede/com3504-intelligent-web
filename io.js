@@ -46,6 +46,9 @@ function getRemoteTweets (socket, q, trackingId) {
 // Socket connection
 module.exports = function (io) {
   io.on('connection', function (socket) {
+	  console.log('connected', socket.id);
+	  
+	  
     // Add new tracking
     socket.on('newTracking', function (client) {
       // Read client's input data
@@ -119,7 +122,7 @@ module.exports = function (io) {
             });
 
             socket.on('disconnectCordova', function () {
-              console.log('User disconnected.');
+              //console.log('User disconnected.');
               tweetStream.stop();
             });
           } else {
@@ -137,7 +140,7 @@ module.exports = function (io) {
 
       sql.getSearchFromId(trackId)
         .then(function (results) {
-          console.log(results);
+          //console.log(results);
           var q = results[0];
           if (q) {
             // Search found, start sending tweets to client

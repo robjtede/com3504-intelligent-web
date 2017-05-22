@@ -6,8 +6,9 @@ USE com3504assignment_bcsdre;
 
 
 SET NAMES utf8mb4;
-ALTER DATABASE com3504assignment_bcsdre CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+ALTER DATABASE team090 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `tweets`;
 DROP TABLE IF EXISTS `searches`;
 CREATE TABLE `searches` (
   `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -18,7 +19,7 @@ CREATE TABLE `searches` (
   `mode` VARCHAR(5) NOT NULL DEFAULT 'AND'
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `tweets`;
+
 CREATE TABLE `tweets` (
   `tweet_id` BIGINT(20) NOT NULL,
   `author` VARCHAR(255) NOT NULL,
