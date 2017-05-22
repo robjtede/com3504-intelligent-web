@@ -54,7 +54,10 @@ module.exports = function (io) {
       if (client.player || client.team || client.author) {
         // isAnd refers to the checkbox for AND/OR mode
         // enabled = AND, OR otherwise (including if no field present)
-        var isAndMode = client.isAnd;
+        var isAndMode = false;
+        if (client.isAnd) {
+          isAndMode = true;
+        };
 
         sql.newTracking(client, isAndMode)
           .then(function (searchId) {
