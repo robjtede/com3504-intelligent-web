@@ -51,6 +51,8 @@ app.initialize();
 
 var socket = io.connect('http://10.0.2.2:3000');
 
+
+
 document.addEventListener('deviceready', function () {
   document.getElementById("defaultOpen").click()
   
@@ -126,9 +128,9 @@ document.addEventListener('deviceready', function () {
 		document.getElementById('Tracking').innerHTML = addTrackings;
     });
 	
-  socket.on('NewTrackingID', function (tracking) {
-	  console.log('got new traking id');
-	  openResults(tracking.NewId);
+  socket.on('NewTrackingID', function (Id) {
+	  console.log('got new traking id: ' + Id);
+	  openResults(Id);
   });
   
   socket.on('playerProfile', function (profileData) {

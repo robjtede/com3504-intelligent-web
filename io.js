@@ -61,10 +61,15 @@ module.exports = function (io) {
 
         sql.newTracking(client, isAndMode)
           .then(function (searchId) {
+<<<<<<< HEAD
             // console.log('Tracking ID created or existing found: ' + searchId);
             socket.emit('NewTrackingID', {
               NewID: searchId
             });
+=======
+            console.log('Tracking ID created or existing found: ' + searchId);
+            socket.emit('NewTrackingID', searchId);
+>>>>>>> Cordova has isAnd bug
           });
       }
     });
@@ -124,7 +129,11 @@ module.exports = function (io) {
             });
 
             socket.on('disconnectCordova', function () {
+<<<<<<< HEAD
               // console.log('User disconnected.');
+=======
+              console.log('Stream closed');
+>>>>>>> Cordova has isAnd bug
               tweetStream.stop();
             });
           } else {
