@@ -118,7 +118,7 @@ document.addEventListener('deviceready', function () {
 			'<div class="tracking-player">' + results[i].player + '</div>' +
 			'<div class="tracking-team">' + results[i].team + '</div>' +
 			'<div class="tracking-author">' + results[i].author + '</div>' +
-			'<div class="tracking-mode">or</div>' +
+			'<div class="tracking-mode">' + results[i].mode + '</div>' +
 			'</div>';
 		}
 		document.getElementById('Tracking').innerHTML = addTrackings;
@@ -197,7 +197,8 @@ function submitSearchForm() {
 	socket.emit('newTracking', {
       player: document.getElementById('mobileplayer').value,
       team: document.getElementById('mobileteam').value,
-      author: document.getElementById('mobileauthor').value
+      author: document.getElementById('mobileauthor').value,
+	  isAnd: document.getElementById('querymode').value
     });
 }
 
@@ -222,7 +223,7 @@ function openTab(evt, TabName) {
     evt.currentTarget.className += " active";
 	
 	document.getElementById('ResultsTab').innerHTML = "";
-	socket.emit('disconnectCordova', {});
+	socket.emit('disconnectCordova');
 }
 
 function openResults(id) {
