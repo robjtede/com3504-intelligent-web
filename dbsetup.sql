@@ -105,4 +105,4 @@ INSERT INTO players (screen_name, real_name) VALUES ('mbatshuayi', 'Michy Batshu
 #INSERT INTO players (screen_name, real_name) VALUES ('NO ACCOUNT', 'Dominic Solanke');
 
 # Set screennames to lowercase
-UPDATE players SET screen_name=LOWER(screen_name)
+UPDATE players SET screen_name=LOWER(screen_name);

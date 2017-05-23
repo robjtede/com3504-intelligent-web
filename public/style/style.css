@@ -107,6 +107,7 @@ nav a:hover {
   border: 1px solid currentColor;
   border-radius: 5px;
   padding: 0.6em 1em;
+  margin-bottom: 0.5em;
 }
 
 .tracking:hover {
@@ -166,15 +167,8 @@ nav a:hover {
 
 .tweet {
   background-color: #294F6D;
-  padding-left: 10px;
-  padding-bottom: 6px;
-  padding-top: 6px;
-  padding-right: 10px;
+  padding: 6px 10px;
   margin-bottom: 8px;
-}
-
-.tweet:first-child {
-  border-width: 2px;
 }
 
 #remoteTweetsButton {
