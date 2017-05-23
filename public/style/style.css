@@ -166,21 +166,89 @@ nav a:hover {
 }
 
 .tweet {
-  background-color: #294F6D;
-  padding: 6px 10px;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: minmax(50px, auto) 1fr;
+  grid-template-rows: repeat(5, fit-content);
+  grid-template-areas: "avatar name"
+                       "avatar username"
+                       "content content"
+                       "time time"
+                       "id id";
+  padding: 0.5em;
   margin-bottom: 8px;
+  border: 2px solid;
 }
 
+.tweet-avatar,
+.tweet-name,
+.tweet-id,
+.tweet-time,
+.tweet-author,
+.tweet-body {
+  margin: 0;
+  padding: 0.5em;
+}
+
+.tweet-avatar {
+  grid-area: avatar;
+}
+
+.tweet-avatar img {
+  width: auto;
+  max-height: 50px;
+  border-radius: 5px;
+}
+
+.tweet-name {
+  grid-area: name;
+  padding-bottom: 0;
+  font-size: 1.2em;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.tweet-id {
+  grid-area: id;
+  color: #444;
+  font-size: 0.9em;
+}
+
+.tweet-id::before {
+  content: 'ID: '
+}
+
+.tweet-time {
+  grid-area: time;
+  padding-top: 0;
+  color: #444;
+  font-size: 0.9em;
+}
+
+.tweet-author {
+  grid-area: username;
+  padding-top: 0;
+}
+
+.tweet-author a::before {
+  content: '@'
+}
+
+.tweet-body {
+  grid-area: content;
+}
+
+
 .tweet.tweet-cache {
-  background: hsl(220, 50%, 70%);
+  border-color: hsl(220, 50%, 70%);
 }
 
 .tweet.tweet-remote {
-  background: hsl(250, 50%, 70%);
+  border-color: hsl(250, 50%, 70%);
 }
 
 .tweet.tweet-stream {
-  background: hsl(280, 50%, 70%);
+  border-color: hsl(280, 50%, 70%);
 }
 
 #remoteTweetsButton {

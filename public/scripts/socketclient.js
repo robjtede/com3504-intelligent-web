@@ -176,7 +176,7 @@ function makeTweetDiv (tweet) {
   var $tweetAvatarImg = document.createElement('img');
 
   $tweetBody.textContent = tweet.content;
-  $tweetTime.textContent = new Date(tweet.datetime);
+  $tweetTime.textContent = tweet.datetime_human;
   $tweetName.textContent = tweet.name;
 
   $tweetLink.href = 'https://twitter.com/' + tweet.author + '/status/' + tweet.tweetId;

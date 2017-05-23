@@ -104,7 +104,8 @@ module.exports = function (io) {
               var formattedTweet = {
                 tweetId: tweet.id_str,
                 author: tweet.user.screen_name,
-                datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
+                datetime: formatDate(tweet.created_at),
+                datetime_human: formatDate(tweet.created_at, true),
                 content: tweet.text,
                 avatarUrl: tweet.user.profile_image_url,
                 name: tweet.user.name
@@ -187,6 +188,18 @@ module.exports = function (io) {
 	
   });
 };
+
+function formatDate (date, human) {
+  var fmt = human
+    ? 'h:m A - D MMM YYYY'
+    : 'YYYY-MM-DD HH:mm:ss';
+
+  return moment(
+    date,
+    'dd MMM DD HH:mm:ss ZZ YYYY',
+    'en'
+  ).format(fmt);
+}
 
 function groupTweet (days, tweet) {
   var sod = moment(tweet.datetime).startOf('day');
