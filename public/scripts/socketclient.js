@@ -3,10 +3,14 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', function () {
+  var tweetsDiv = document.querySelector('#tweetList');
+  var tweetsCount = document.querySelector('#tweetCount');
+  var playerProfileDiv = document.querySelector('#playerProfile');
+  var getRemoteButton = document.querySelector('#remoteTweetsButton');
+
   var socket = io.connect();
   var pathname = window.location.pathname;
 
-  var getRemoteButton = document.getElementById('remoteTweetsButton');
   if (getRemoteButton) {
     getRemoteButton.addEventListener('click', function () {
       if (pathname.substring(0, 16) === '/trackings/show/') {
@@ -36,60 +40,45 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Add player profile info
-  var playerProfileDiv = document.getElementById('playerProfile');
   if (playerProfileDiv) {
     socket.on('playerProfile', function (profileData) {
-      var profileStr = '<div><p>' + profileData.name + '</p>' +
-                        '<p>' + profileData.club + '</p>' +
-                        '<p>' + profileData.position + '</p>' +
-                        '<img src="' + profileData.imgUrl + '"' +
-                        ' width="80px"> </div>';
-      playerProfileDiv.innerHTML = profileStr + playerProfileDiv.innerHTML;
+      var profileStr =
+        '<div>' +
+          '<p>' + profileData.name + '</p>' +
+          '<p>' + profileData.club + '</p>' +
+          '<p>' + profileData.position + '</p>' +
+          '<img src="' + profileData.imgUrl + '" width="80px">' +
+        '</div>';
+
+      playerProfileDiv.innerHTML = profileStr;
     });
   }
 
   // Got socket of tweets from database
   socket.on('cachedTweets', function (data) {
     console.log('got cached tweets');
-    var tweetsDiv = document.getElementById('tweetList');
-    var tweetsCount = document.getElementById('tweetCount');
-    var addedTweets = '';
 
-    for (var t in data) {
-      var tweet = data[t];
+    data.forEach(function (tweet) {
+      tweetsDiv.insertBefore(makeTweetDiv(tweet, 'cache'), tweetsDiv.firstChild);
+    });
 
-      addedTweets += '<p> CACHED RESULT:</p>';
-      addedTweets += makeTweetDiv(tweet);
-    }
-
-    tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
     tweetsCount.textContent = data.length;
   });
 
   // Got socket of tweets from get/search
   socket.on('getRemoteTweets', function (data) {
     console.log('got remote tweets');
-    var tweetsDiv = document.getElementById('tweetList');
-    var tweetsCount = document.getElementById('tweetCount');
-    var addedTweets = '';
 
-    for (var t in data) {
-      var tweet = data[t];
+    data.forEach(function (tweet) {
+      tweetsDiv.insertBefore(makeTweetDiv(tweet, 'remote'), tweetsDiv.firstChild);
+    });
 
-      addedTweets += '<p> GET/SEARCH RESULT:</p>';
-      addedTweets += makeTweetDiv(tweet);
-    }
-    tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
     tweetsCount.textContent = parseInt(tweetsCount.textContent) + data.length;
   });
 
   // Got socket of streamed tweet
   socket.on('streamedTweet', function (tweet) {
-    var tweetsDiv = document.getElementById('tweetList');
-    var addedTweet = '<p> STREAM RESULT:</p>';
-
-    addedTweet += makeTweetDiv(tweet);
-    tweetsDiv.innerHTML = addedTweet + tweetsDiv.innerHTML;
+    tweetsDiv.insertBefore(makeTweetDiv(tweet, 'stream'), tweetsDiv.firstChild);
   });
 
   socket.on('getTweetFrequency', function (data) {
@@ -139,13 +128,35 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-// Prepare a tweet div
-function makeTweetDiv (tweet) {
-  var newDiv = '<div class="tweet">' +
-    '<p><a href="https://twitter.com/' + tweet.author + '/status/' + tweet.tweet_id + '">' + tweet.tweet_id + '</a></p>' +
-      '<p>' + tweet.datetime + '</p>' +
-        '<p><a href="https://twitter.com/' + tweet.author + '">' + tweet.author + '</a></p>' +
-          '<p>' + tweet.content + '</p>' +
-            '</div>';
-  return newDiv;
+function makeTweetDiv (tweet, type) {
+  var $tweet = document.createElement('div');
+  $tweet.classList.add('tweet');
+  $tweet.classList.add('tweet-' + type);
+
+  var $tweetId = document.createElement('p');
+  var $tweetTime = document.createElement('p');
+  var $tweetAuthor = document.createElement('p');
+  var $tweetBody = document.createElement('p');
+
+  var $tweetLink = document.createElement('a');
+  var $tweetAuthorLink = document.createElement('a');
+
+  $tweetTime.textContent = tweet.datetime;
+  $tweetBody.textContent = tweet.content;
+
+  $tweetLink.href = 'https://twitter.com/' + tweet.author + '/status/' + tweet.tweet_id;
+  $tweetLink.textContent = tweet.tweet_id;
+
+  $tweetAuthorLink.href = 'https://twitter.com/' + tweet.author;
+  $tweetAuthorLink.textContent = tweet.author;
+
+  $tweetId.appendChild($tweetLink);
+  $tweetAuthor.appendChild($tweetAuthorLink);
+
+  $tweet.appendChild($tweetId);
+  $tweet.appendChild($tweetTime);
+  $tweet.appendChild($tweetAuthor);
+  $tweet.appendChild($tweetBody);
+
+  return $tweet;
 }
