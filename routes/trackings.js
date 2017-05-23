@@ -11,7 +11,12 @@ module.exports = function (app) {
 };
 
 function newTrack (req, res) {
-  res.render('track/new');
+  return sql.query('SELECT * FROM searches ORDER BY id DESC')
+    .then(function (results) {
+      res.render('track/new', {
+        trackings: results
+      });
+    });
 }
 
 function create (req, res) {
