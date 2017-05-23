@@ -21,6 +21,7 @@ CREATE TABLE `searches` (
 
 
 CREATE TABLE `tweets` (
+  `local_id` BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `tweet_id` BIGINT(20) NOT NULL,
   `author` VARCHAR(255) NOT NULL,
   `datetime` DATETIME NOT NULL,
@@ -29,7 +30,7 @@ CREATE TABLE `tweets` (
   FOREIGN KEY(`searches_id`) REFERENCES `searches`(`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
-CREATE UNIQUE INDEX tweets_uid ON tweets (Tweet_ID);
+#CREATE UNIQUE INDEX tweets_uid ON tweets (Tweet_ID);
 
 DROP TABLE IF EXISTS `players`;
 CREATE TABLE `players` (

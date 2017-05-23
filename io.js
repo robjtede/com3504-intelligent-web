@@ -17,19 +17,19 @@ function getCachedTweets (socket, trackingId) {
     });
 }
 
-function getRemoteTweets (socket, q, trackingId) {
+function getRemoteTweets (socket, q, searchId) {
   twitter
     .search(q)
     .then(function (data) {
       var tweets = data.tweets;
       var maxTweetId = data.maxTweetId;
 
-      // Add max tweet id to tracking
-      if (maxTweetId) sql.updateSearchNewestTweet(trackingId, maxTweetId);
+      // Add max tweet id to tracking (search)
+      if (maxTweetId) sql.updateSearchNewestTweet(searchId, maxTweetId);
 
       if (tweets.length) {
         // Insert new tweets into database
-        sql.insertTweetMulti(tweets, trackingId);
+        sql.insertTweetMulti(tweets, searchId);
 
         // Send dates to page
         socket.emit('getRemoteTweets', tweets);
@@ -48,7 +48,7 @@ module.exports = function (io) {
   io.on('connection', function (socket) {
     console.log('connected', socket.id);
 
-    // Add new tracking
+    // Add new tracking (search)
     socket.on('newTracking', function (client) {
       // Read client's input data
       if (client.player || client.team || client.author) {
@@ -59,7 +59,7 @@ module.exports = function (io) {
           isAndMode = true;
         };
 
-        sql.newTracking(client, isAndMode)
+        sql.newSearch(client, isAndMode)
           .then(function (searchId) {
             console.log('Tracking ID created or existing found: ' + searchId);
             socket.emit('NewTrackingID', searchId);
@@ -67,11 +67,11 @@ module.exports = function (io) {
       }
     });
 
-    // Get list of every tracking present in database.
+    // Get list of every tracking (search) present in database.
     // NOTE: a tracking's id can be used passed into the client's "trackingId"
     //        field for the socket "join" event to get its tweets
     socket.on('getTrackingsList', function (client) {
-      sql.getTrackingsList()
+      sql.getSearchList()
         .then(function (results) {
           if (results[0]) {
             // Has results
@@ -81,15 +81,15 @@ module.exports = function (io) {
     });
 
     socket.on('requestRemoteTweets', function (client) {
-      var trackId = client.trackingId;
-      console.log('SOCKET GET REMOTE WITH ID: ' + trackId);
+      var searchId = client.trackingId;
+      console.log('SOCKET GET REMOTE WITH ID: ' + searchId);
 
-      sql.getSearchFromId(trackId)
+      sql.getSearchFromId(searchId)
         .then(function (results) {
           var q = results[0];
           if (q) {
             // Now retrieve more tweets from twitter, and add to page
-            getRemoteTweets(socket, q, trackId);
+            getRemoteTweets(socket, q, searchId);
             // TODO fix issue of too many tweets crashing page, perhaps just limit amount of streamed tweets
 
             // Start streaming tweets
@@ -106,10 +106,10 @@ module.exports = function (io) {
               };
 
               // Insert into db
-              sql.insertTweet(formattedTweet, trackId);
+              sql.insertTweet(formattedTweet, searchId);
 
               // update max id of search
-              sql.updateSearchNewestTweet(trackId, formattedTweet.tweet_id);
+              sql.updateSearchNewestTweet(searchId, formattedTweet.tweet_id);
 
               // Send tweet to page
               socket.emit('streamedTweet', formattedTweet);
@@ -127,7 +127,7 @@ module.exports = function (io) {
               tweetStream.stop();
             });
           } else {
-            // No tracking found
+            // No tracking (search) found
             // TODO handle
           }
         });
@@ -135,9 +135,9 @@ module.exports = function (io) {
 
     // Standard client connection
     socket.on('join', function (client) {
-      var trackId = client.trackingId;
+      var searchId = client.trackingId;
 
-      sql.getSearchFromId(trackId)
+      sql.getSearchFromId(searchId)
         .then(function (results) {
           // console.log(results);
           var q = results[0];
@@ -146,7 +146,7 @@ module.exports = function (io) {
             // Initialise set to track existing ids (prevent duplicate tweets)
 
             // Get tweets from database
-            getCachedTweets(socket, trackId);
+            getCachedTweets(socket, searchId);
 
             dbp.findPlayer(socket, q);
           } else {

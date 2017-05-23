@@ -21,7 +21,7 @@ function create (req, res) {
     // TODO change to switch button
     var isAndMode = q.querymode;
 
-    sql.newTracking(q, isAndMode)
+    sql.newSearch(q, isAndMode)
       .then(function (id) {
         console.log(id);
 
