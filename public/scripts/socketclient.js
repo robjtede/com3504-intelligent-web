@@ -11,6 +11,20 @@ document.addEventListener('DOMContentLoaded', function () {
   var socket = io.connect();
   var pathname = window.location.pathname;
 
+  var tweetList = [];
+
+  function renderTweetList (from) {
+    if (!from) from = 0;
+
+    while (tweetsDiv.firstChild) {
+      tweetsDiv.removeChild(tweetsDiv.firstChild);
+    }
+
+    tweetList.slice(0, 60).forEach(function (tweet) {
+      tweetsDiv.appendChild(makeTweetDiv(tweet));
+    });
+  }
+
   if (getRemoteButton) {
     getRemoteButton.addEventListener('click', function () {
       if (pathname.substring(0, 16) === '/trackings/show/') {
@@ -59,10 +73,12 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('got cached tweets');
 
     data.forEach(function (tweet) {
-      tweetsDiv.insertBefore(makeTweetDiv(tweet, 'cache'), tweetsDiv.firstChild);
+      tweet.dataSource = 'cache';
+      tweetList.unshift(tweet);
     });
 
     tweetsCount.textContent = data.length;
+    renderTweetList(0);
   });
 
   // Got socket of tweets from get/search
@@ -70,15 +86,23 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('got remote tweets');
 
     data.forEach(function (tweet) {
-      tweetsDiv.insertBefore(makeTweetDiv(tweet, 'remote'), tweetsDiv.firstChild);
+      tweet.dataSource = 'remote';
+      tweetList.unshift(tweet);
     });
 
     tweetsCount.textContent = parseInt(tweetsCount.textContent) + data.length;
+
+    renderTweetList(0);
   });
 
   // Got socket of streamed tweet
   socket.on('streamedTweet', function (tweet) {
-    tweetsDiv.insertBefore(makeTweetDiv(tweet, 'stream'), tweetsDiv.firstChild);
+    tweet.dataSource = 'stream';
+    tweetList.unshift(tweet);
+
+    tweetsCount.textContent = parseInt(tweetsCount.textContent) + 1;
+
+    renderTweetList(0);
   });
 
   socket.on('getTweetFrequency', function (data) {
@@ -128,10 +152,10 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-function makeTweetDiv (tweet, type) {
+function makeTweetDiv (tweet) {
   var $tweet = document.createElement('div');
   $tweet.classList.add('tweet');
-  $tweet.classList.add('tweet-' + type);
+  $tweet.classList.add('tweet-' + tweet.dataSource);
 
   var $tweetId = document.createElement('p');
   var $tweetTime = document.createElement('p');

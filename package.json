@@ -6,7 +6,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "start:dev": "NODE_ENV=development nodemon app.js",
+    "start:dev": "NODE_ENV=development nodemon --delay 1 --ignore public/ app.js",
     "start": "NODE_ENV=production node app.js"
   },
   "dependencies": {

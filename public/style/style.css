@@ -171,6 +171,18 @@ nav a:hover {
   margin-bottom: 8px;
 }
 
+.tweet.tweet-cache {
+  background: hsl(220, 50%, 70%);
+}
+
+.tweet.tweet-remote {
+  background: hsl(250, 50%, 70%);
+}
+
+.tweet.tweet-stream {
+  background: hsl(280, 50%, 70%);
+}
+
 #remoteTweetsButton {
   background-color: hsl(0, 70%, 45%);
   color: #FFFFFF;
