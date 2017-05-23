@@ -157,30 +157,46 @@ function makeTweetDiv (tweet) {
   $tweet.classList.add('tweet');
   $tweet.classList.add('tweet-' + tweet.dataSource);
 
-  var $tweetId = document.createElement('p');
-  var $tweetTime = document.createElement('p');
   var $tweetAuthor = document.createElement('p');
+  var $tweetAvatar = document.createElement('div');
   var $tweetBody = document.createElement('p');
+  var $tweetId = document.createElement('p');
+  var $tweetName = document.createElement('p');
+  var $tweetTime = document.createElement('p');
+
+  $tweetAuthor.classList.add('tweet-author');
+  $tweetAvatar.classList.add('tweet-avatar');
+  $tweetBody.classList.add('tweet-body');
+  $tweetId.classList.add('tweet-id');
+  $tweetName.classList.add('tweet-name');
+  $tweetTime.classList.add('tweet-time');
 
   var $tweetLink = document.createElement('a');
   var $tweetAuthorLink = document.createElement('a');
+  var $tweetAvatarImg = document.createElement('img');
 
-  $tweetTime.textContent = tweet.datetime;
   $tweetBody.textContent = tweet.content;
+  $tweetTime.textContent = new Date(tweet.datetime);
+  $tweetName.textContent = tweet.name;
 
-  $tweetLink.href = 'https://twitter.com/' + tweet.author + '/status/' + tweet.tweet_id;
-  $tweetLink.textContent = tweet.tweet_id;
+  $tweetLink.href = 'https://twitter.com/' + tweet.author + '/status/' + tweet.tweetId;
+  $tweetLink.textContent = tweet.tweetId;
 
   $tweetAuthorLink.href = 'https://twitter.com/' + tweet.author;
   $tweetAuthorLink.textContent = tweet.author;
 
+  $tweetAvatarImg.src = tweet.avatarUrl;
+
   $tweetId.appendChild($tweetLink);
   $tweetAuthor.appendChild($tweetAuthorLink);
+  $tweetAvatar.appendChild($tweetAvatarImg);
 
-  $tweet.appendChild($tweetId);
-  $tweet.appendChild($tweetTime);
   $tweet.appendChild($tweetAuthor);
+  $tweet.appendChild($tweetAvatar);
   $tweet.appendChild($tweetBody);
+  $tweet.appendChild($tweetId);
+  $tweet.appendChild($tweetName);
+  $tweet.appendChild($tweetTime);
 
   return $tweet;
 }

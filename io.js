@@ -29,7 +29,10 @@ function getRemoteTweets (socket, q, searchId) {
 
       if (tweets.length) {
         // Insert new tweets into database
-        sql.insertTweetMulti(tweets, searchId);
+        sql.insertTweetMulti(tweets, searchId)
+          .catch(function (err) {
+            console.error(err);
+          });
 
         // Send dates to page
         socket.emit('getRemoteTweets', tweets);
@@ -99,10 +102,12 @@ module.exports = function (io) {
             tweetStream.on('tweet', function (tweet) {
               // Format tweet for consistency
               var formattedTweet = {
-                tweet_id: tweet.id_str,
+                tweetId: tweet.id_str,
                 author: tweet.user.screen_name,
                 datetime: moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').format('YYYY-MM-DD HH:mm:ss'),
-                content: tweet.text
+                content: tweet.text,
+                avatarUrl: tweet.user.profile_image_url,
+                name: tweet.user.name
               };
 
               // Insert into db
