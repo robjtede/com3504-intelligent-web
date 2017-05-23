@@ -20,13 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
-  /*
-  var checkbox = document.getElementById('cacheonly');
-  checkbox.checked = window.localStorage.useCache;
-  checkbox.addEventListener('change', function (ev) {
-    window.localStorage.useCache = checkbox.checked;
-  });
-  */
 
   socket.on('connect', function () {
     console.log('connected', socket.id);
@@ -149,9 +142,9 @@ document.addEventListener('DOMContentLoaded', function () {
 // Prepare a tweet div
 function makeTweetDiv (tweet) {
   var newDiv = '<div class="tweet">' +
-    '<p>' + tweet.tweet_id + '</p>' +
+    '<p><a href="https://twitter.com/' + tweet.author + '/status/' + tweet.tweet_id + '">' + tweet.tweet_id + '</a></p>' +
       '<p>' + tweet.datetime + '</p>' +
-        '<p>' + tweet.author + '</p>' +
+        '<p><a href="https://twitter.com/' + tweet.author + '">' + tweet.author + '</a></p>' +
           '<p>' + tweet.content + '</p>' +
             '</div>';
   return newDiv;
