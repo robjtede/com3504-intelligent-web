@@ -11,5 +11,9 @@
             "PACKAGE_NAME": "io.cordova.MobileApp"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "io.cordova.MobileApp"
+        }
+    }
 }
