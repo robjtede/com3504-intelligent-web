@@ -88,15 +88,16 @@ document.addEventListener('DOMContentLoaded', function () {
   if (playerProfileDiv) {
     socket.on('playerProfile', function (profileData) {
       var profileStr =
-        '<div class="playerInfo">' +
+        '<div class="player-info">' +
           '<img src="' + profileData.imgUrl + '" width="80px">' +
-          '<p> Name: ' + profileData.name + '</p>' +
-          '<p> Club: ' + profileData.club + '</p>' +
-          '<p> Position: ' + profileData.position + '</p>' +
-          '<p> Date of Birth: ' + profileData.dob + '</p>' +
+          '<p class="player-info-name">' + profileData.name + '</p>' +
+          '<p class="player-info-club">' + profileData.club + '</p>' +
+          '<p class="player-info-pos">' + profileData.position + '</p>' +
+          '<p class="player-info-dob">' + profileData.dob + '</p>' +
         '</div>';
 
       playerProfileDiv.innerHTML += profileStr;
+      playerProfileDiv.style.display = 'block';
     });
   }
 

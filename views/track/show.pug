@@ -18,7 +18,7 @@ block main
 
   div.paging
     div.page-nav.js-page-nav
-      a.prev-page.js-prev-page(href="#") &larr; Prev Page
+      a(href="#").prev-page.js-prev-page.button &larr; Prev Page
 
     div.page-size
       div
@@ -28,7 +28,7 @@ block main
         input(type="range" min="10" max="200" step="10", value="50")#js-page-size.js-page-size
 
     div.page-nav.js-page-nav
-      a.next-page.js-next-page(href="#") Next Page &rarr;
+      a(href="#").next-page.js-next-page.button Next Page &rarr;
 
   div.remote-tweets-button
     p Get New Tweets

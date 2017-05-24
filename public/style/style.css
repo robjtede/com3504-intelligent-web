@@ -1,5 +1,8 @@
 :root {
-  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: BlinkMacSystemFont, -apple-system,
+    "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
   font-size: 18px;
 }
 
@@ -104,7 +107,7 @@ h2 {
 }
 
 h2 {
-  margin: 0.2em 0;
+  margin: 0.5em 0 0.2em;
 }
 
 .recent-trackings h2 {
@@ -144,12 +147,17 @@ h2 {
   content: 'Mode: ';
 }
 
+.tracking-info {
+  border-bottom: 1px solid black;
+  padding-bottom: 0.5em;
+}
+
 .tracking-info p {
   margin: 0.2em 0;
 }
 
 .tweet-list {
-  padding-top: 10px;
+  padding-top: 1em;
   margin: 0 auto;
 }
 
@@ -185,6 +193,7 @@ h2 {
   justify-content: center;
   align-items: center;
   padding-bottom: 1em;
+  border-bottom: 1px solid black;
 }
 
 .stats .table,
@@ -216,12 +225,31 @@ h2 {
   background: hsl(0, 0%, 95%);
 }
 
+.paging {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1em 0;
+  border-bottom: 1px solid black;
+}
+
 .page-size {
-  bottom: 1px solid black;
+  flex-grow: 1;
+  text-align: center;
+  font-size: 1.2em;
+  padding: 0 1em;
+}
+
+.page-size label {
+  padding-right: 1ch;
 }
 
 .page-size input {
-  margin: 0 1em;
+  margin-top: 0.5em;
+  width: 100%;
+  max-width: 300px;
 }
 
 .tweet {
@@ -309,26 +337,85 @@ h2 {
   border-color: hsl(280, 50%, 70%);
 }
 
+.button {
+  padding: 0.8em 1em;
+  background: hsl(0, 85%, 50%);
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background: hsl(0, 70%, 45%);
+}
+
 .remote-tweets-button {
-  background-color: hsl(0, 70%, 45%);
-  color: #FFFFFF;
+  padding: 0.5em 1em;
+  margin-top: 1em;
+  border: 2px solid hsl(0, 85%, 50%);
+  color: hsl(0, 85%, 50%);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.5em;
   cursor: pointer;
-  padding: 4px 8px;
-  font-weight: bold;
-  text-decoration: underline;
+  transition: background-color 100ms ease, color 100ms ease;
 }
 
-.playerProfiles {
+.remote-tweets-button:hover {
+  background: hsl(0, 85%, 50%);
+  color: white;
+}
+
+.player-profiles {
+  display: none;
+}
+
+.player-profiles {
+  border-bottom: 1px solid black;
+}
+
+.tracking-info .tracking-player::before,
+.tracking-info .tracking-team::before,
+.tracking-info .tracking-author::before,
+.tracking-info .tracking-mode::before,
+.player-info-name::before,
+.player-info-club::before,
+.player-info-pos::before,
+.player-info-dob::before {
+  color: hsl(0, 0%, 30%);
+}
+
+.player-info-name::before {
+  content: 'Name: '
+}
+.player-info-club::before {
+  content: 'Club: '
+}
+.player-info-pos::before {
+  content: 'Position: '
+}
+.player-info-dob::before {
+  content: 'Date of Birth: '
+}
+
+.player-info {
+  padding: 0.5em 0;
+}
+
+.player-info::after {
+  content: '';
   display: block;
+  width: 100%;
+  clear: both;
 }
 
-.playerInfo {
-  background-color: hsl(0, 70%, 45%);
-  margin: 8px 0px;
-  padding: 4px 8px;
-  color: #FFFFFF;
+.player-info p {
+  margin: 0.3em 0;
 }
 
-.playerInfo img {
+.player-info img {
   float: right;
+  height: 120px;
+  width: auto;
+  border-radius: 10px;
 }
