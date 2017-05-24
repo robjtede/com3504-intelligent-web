@@ -36,18 +36,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  function requestRemoteTweets () {
+    if (pathname.substring(0, 16) === '/trackings/show/') {
+      var trackIdStr = pathname.substring(16);
+      var trackId = parseInt(trackIdStr);
+      socket.emit('requestRemoteTweets', {
+        path: pathname,
+        trackingId: trackId
+      });
+      getRemoteButton.style.display = 'none';
+    }
+  }
+
   if (getRemoteButton) {
-    getRemoteButton.addEventListener('click', function () {
-      if (pathname.substring(0, 16) === '/trackings/show/') {
-        var trackIdStr = pathname.substring(16);
-        var trackId = parseInt(trackIdStr);
-        socket.emit('requestRemoteTweets', {
-          path: pathname,
-          trackingId: trackId
-        });
-        getRemoteButton.style.display = 'none';
-      }
-    });
+    getRemoteButton.addEventListener('click', requestRemoteTweets);
   }
 
   socket.on('connect', function () {
@@ -89,8 +91,12 @@ document.addEventListener('DOMContentLoaded', function () {
       tweetList.unshift(tweet);
     });
 
-    tweetsCount.textContent = data.length;
-    renderTweetList();
+    if (data.length) {
+      tweetsCount.textContent = data.length;
+      renderTweetList();
+    } else {
+      requestRemoteTweets();
+    }
 
     document.querySelector('.tracking-info .tracking-player').textContent = window.player;
     document.querySelector('.tracking-info .tracking-team').textContent = window.team;
