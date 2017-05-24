@@ -175,5 +175,22 @@ nav a:hover {
   background-color: hsl(0, 70%, 45%);
   color: #FFFFFF;
   cursor:pointer;
-  padding: 4px;
+  padding: 4px 8px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+#playerProfiles {
+  display: block;
+}
+
+.playerInfo {
+  background-color: hsl(0, 70%, 45%);
+  margin: 8px 0px;
+  padding: 4px 8px;
+  color: #FFFFFF;
+}
+
+.playerInfo img {
+  float: right;
 }

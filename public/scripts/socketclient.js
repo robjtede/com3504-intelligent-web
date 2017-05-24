@@ -5,7 +5,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   var tweetsDiv = document.querySelector('#tweetList');
   var tweetsCount = document.querySelector('#tweetCount');
-  var playerProfileDiv = document.querySelector('#playerProfile');
+  var playerProfileDiv = document.querySelector('#playerProfiles');
   var getRemoteButton = document.querySelector('#remoteTweetsButton');
 
   var socket = io.connect();
@@ -43,14 +43,14 @@ document.addEventListener('DOMContentLoaded', function () {
   if (playerProfileDiv) {
     socket.on('playerProfile', function (profileData) {
       var profileStr =
-        '<div>' +
+        '<div class="playerInfo">' +
+          '<img src="' + profileData.imgUrl + '" width="80px">' +
           '<p>' + profileData.name + '</p>' +
           '<p>' + profileData.club + '</p>' +
           '<p>' + profileData.position + '</p>' +
-          '<img src="' + profileData.imgUrl + '" width="80px">' +
         '</div>';
 
-      playerProfileDiv.innerHTML = profileStr;
+      playerProfileDiv.innerHTML += profileStr;
     });
   }
 

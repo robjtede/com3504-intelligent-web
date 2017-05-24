@@ -9,10 +9,10 @@ append scripts
     script!= "window.mode = \"" + search.mode + "\""
 
 block main
+  div#playerProfiles
+
   div#remoteTweetsButton
     p Get Remote Tweets
-
-  div#playerProfile
 
   canvas#myChart(width="1200" height="400")
 
