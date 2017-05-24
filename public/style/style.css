@@ -53,7 +53,6 @@ body > .col:first-of-type {
 body > .col:first-child h1,
 body > .col:first-child h2 {
   padding: 0 1rem;
-  font-weight: normal;
 }
 
 body > .col:last-of-type {
@@ -99,6 +98,20 @@ nav a:hover {
   background: hsla(0, 100%, 60%, 0.4);
 }
 
+h1,
+h2 {
+  font-weight: normal;
+}
+
+h2 {
+  margin: 0.2em 0;
+}
+
+.recent-trackings h2 {
+  margin: 0.8em 0 0.5em;
+  text-align: center;
+}
+
 .recent-trackings-list {
   padding: 0 1rem;
 }
@@ -135,29 +148,18 @@ nav a:hover {
   margin: 0.2em 0;
 }
 
-.tracking-info h2 {
-  margin: 0.2em 0;
-}
-
-#tweetcount {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-}
-
-#tweetlist {
+.tweet-list {
   padding-top: 10px;
   margin: 0 auto;
-  max-width: 1000px;
 }
 
-#myChart {
+.stats .chart canvas {
   background-color: white;
   margin-top: 20px;
   margin-left: 20px;
   margin-bottom: 20px;
   max-width: 500px;
-  max-height: 300px;
+  max-height: 500px;
 }
 
 .searchform {
@@ -179,17 +181,27 @@ nav a:hover {
 
 .stats {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1em;
 }
 
 .stats .table,
 .stats .chart {
   flex: 1 0 200px;
+  text-align: center;
 }
 
 .stats .table table {
   border-collapse: collapse;
+  margin: 0 auto;
 }
+
+.stats .chart canvas {
+  margin: 0 auto;
+}
+
 
 .stats .table table td {
   padding: 0.5em;
@@ -297,7 +309,7 @@ nav a:hover {
   border-color: hsl(280, 50%, 70%);
 }
 
-#remoteTweetsButton {
+.remote-tweets-button {
   background-color: hsl(0, 70%, 45%);
   color: #FFFFFF;
   cursor: pointer;
@@ -306,7 +318,7 @@ nav a:hover {
   text-decoration: underline;
 }
 
-#playerProfiles {
+.playerProfiles {
   display: block;
 }
 

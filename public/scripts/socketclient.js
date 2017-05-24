@@ -3,12 +3,16 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', function () {
-  var tweetsDiv = document.querySelector('#tweetList');
-  var tweetsCount = document.querySelector('#tweetCount');
-  var playerProfileDiv = document.querySelector('#playerProfiles');
-  var getRemoteButton = document.querySelector('#remoteTweetsButton');
-  var chart = document.querySelector('#myChart');
+  var tweetsDiv = document.querySelector('.tweet-list');
+  var playerProfileDiv = document.querySelector('.player-profiles');
+  var getRemoteButton = document.querySelector('.remote-tweets-button');
+  var chart = document.querySelector('.stats .chart canvas');
   var statsTable = document.querySelector('.stats .table');
+
+  var playerEl = document.querySelector('.tracking-info .tracking-player');
+  var teamEl = document.querySelector('.tracking-info .tracking-team');
+  var authorEl = document.querySelector('.tracking-info .tracking-author');
+  var modeEl = document.querySelector('.tracking-info .tracking-mode');
 
   var tweetsPerPageSlider = document.querySelector('.js-page-size');
   var tweetsPerPageIndicator = document.querySelector('.js-page-size-indicator');
@@ -68,12 +72,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   socket.on('trackingInfo', function (q) {
     console.log('get tracking info');
-    console.log(q);
-
-    var playerEl = document.querySelector('.tracking-info .tracking-player');
-    var teamEl = document.querySelector('.tracking-info .tracking-team');
-    var authorEl = document.querySelector('.tracking-info .tracking-author');
-    var modeEl = document.querySelector('.tracking-info .tracking-mode');
 
     if (!q.terms_player && playerEl) playerEl.style.display = 'none';
     if (!q.terms_team && teamEl) teamEl.style.display = 'none';
@@ -104,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Got socket of tweets from database
   socket.on('cachedTweets', function (data) {
-    // console.log('got cached tweets');
+    console.log('got cached tweets');
 
     data.forEach(function (tweet) {
       tweet.dataSource = 'cache';
@@ -112,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (data.length) {
-      tweetsCount.textContent = data.length;
       renderTweetList();
     } else {
       requestRemoteTweets();
@@ -121,24 +118,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Got socket of tweets from get/search
   socket.on('getRemoteTweets', function (data) {
-    // console.log('got remote tweets');
+    console.log('got remote tweets');
 
     data.reverse().forEach(function (tweet) {
       tweet.dataSource = 'remote';
       tweetList.unshift(tweet);
     });
 
-    tweetsCount.textContent = parseInt(tweetsCount.textContent) + data.length;
-
     renderTweetList();
   });
 
   // Got socket of streamed tweet
   socket.on('streamedTweet', function (tweet) {
+    console.log('got streamed tweet');
+
     tweet.dataSource = 'stream';
     tweetList.unshift(tweet);
-
-    tweetsCount.textContent = parseInt(tweetsCount.textContent) + 1;
 
     renderTweetList();
 
