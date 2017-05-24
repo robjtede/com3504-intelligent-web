@@ -142,7 +142,14 @@ document.addEventListener('DOMContentLoaded', function () {
           }]
         },
         options: {
-          responsive: true
+          responsive: true,
+          scales: {
+            yAxes: [{
+              ticks: {
+                min: 0
+              }
+            }]
+          }
         }
       });
     } else {

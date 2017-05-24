@@ -12,8 +12,6 @@ function getCachedTweets (socket, trackingId) {
       // Send tweets to client
       socket.emit('cachedTweets', results);
 
-      console.log(results[0]);
-
       // Send frequencies to client
       socket.emit('getTweetFrequency', series(results.reduce(groupTweet, {})));
     });
@@ -232,17 +230,37 @@ function series (groups) {
   for (var day in groups) {
     if (groups.hasOwnProperty(day)) {
       series.push({
-        day: new Date(day).getTime(),
+        day: new Date(day),
         num: groups[day]
       });
     }
   }
 
-  series = series.sort(function (a, b) {
-    return a.day < b.day ? -1 : 1;
+  var zeroWeek = [0, 1, 2, 3, 4, 5, 6].map(function (n) {
+    var startOfDay = moment().subtract(n, 'days').startOf('day');
+
+    return {
+      day: new Date(startOfDay),
+      num: 0
+    };
   });
 
-  console.log(series);
+  zeroWeek.forEach(function (zeroDay) {
+    var exists = false;
+
+    series.forEach(function (day) {
+      if (exists) return;
+
+      if (+zeroDay.day === +day.day) exists = true;
+      else exists = false;
+    });
+
+    if (!exists) series.push(zeroDay);
+  });
+
+  series = series.sort(function (a, b) {
+    return a.day < b.day ? -1 : 1;
+  }).reverse().slice(0, 7).reverse();
 
   return series;
 }
