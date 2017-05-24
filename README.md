@@ -1,10 +1,9 @@
-COM3504 Assignment, Part 1
-==========================
+COM3504 Assignment
+==================
 Ben Clegg, Sam Dickinson, and Rob Ede
-Combined request server and webapp.
+Combined request server and webapp, plus Cordova hybrid mobile app client.
 
-This server was developed on Node version 7.7.3, but is confirmed to work on
-version 6.10+ (long term support).
+This server runs on Node v0.12.4 and above.
 
 We are using the following Node modules/packages:
 - express (middleware web framework)
@@ -18,13 +17,11 @@ We are using the following Node modules/packages:
 SETUP
 =====
 
-As we currently don't have access to our database (as mentioned in our email),
-we have developed this system using locally hosted databases.
-As such, this must be configured before using the application:
-
-- Modify config.json with the correct credentials (username [user] and password [pass]), and the correct port. The database name should not be modified.
-- Run the SQL script 'dbsetup.sql' by accessing your MySQL server (mysql -u USERNAME -p), and running the query 'source /PATH/../TO/../dbsetup.sql;' This configures the database and selects it.
+A custom database and Twitter client can be configured by editing the server's config.json accordingly, yet these are already configured with our own credentials.
+The database schema is databaseschema/dbsetup.sql
 
 RUNNING
 =======
 To use the application, run 'node app.js', and open 'localhost:3000' in your web browser.
+The server must be running for the Cordova app to function.
+In the event that modules do not run correctly, please run 'npm install'
