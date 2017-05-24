@@ -1,0 +1,35 @@
+In form... ("-" is blank)
+QUERYNAME:
+PLAYER
+TEAM
+AUTHOR
+MODE
+
+
+
+QUERY 1:
+@waynerooney, rooney
+Chelsea
+-
+AND
+
+
+QUERY(?):
+@waynerooney, Rooney, #waynerooney
+@manutd, #manutd
+-
+AND
+
+
+QUERY(?):
+@waynerooney, Rooney, #waynerooney
+@manutd, #manutd
+-
+OR
+
+
+QUERY(?):
+-
+-
+@WayneRooney
+AND
