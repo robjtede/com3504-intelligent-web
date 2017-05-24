@@ -21,12 +21,6 @@ block main
         td: label(for='querymode') Query Mode (Enabled = AND, Disabled = OR)
         td: input(type='checkbox' id='querymode' name='querymode')
 
-      //-
-        // TODO cached tweets should be used on retrieval instead - can't populate a search otherwise
-        tr
-          td: label(for='cacheonly') Only Use Cached Tweets
-          td: input(type='checkbox' id='cacheonly' name='cacheonly')
-
       tr
         td &nbsp;
         td: input#submitSearchForm(type='submit')

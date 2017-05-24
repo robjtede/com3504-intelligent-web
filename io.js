@@ -99,7 +99,6 @@ module.exports = function (io) {
               .catch(function (err) {
                 console.error(err);
               });
-            // TODO fix issue of too many tweets crashing page, perhaps just limit amount of streamed tweets
 
             // Start streaming tweets
             // Now listen to stream, adding to page as received
@@ -157,7 +156,6 @@ module.exports = function (io) {
 
       sql.getSearchFromId(searchId)
         .then(function (results) {
-          // console.log(results);
           var q = results[0];
           if (q) {
             // Search found, start sending tweets to client
