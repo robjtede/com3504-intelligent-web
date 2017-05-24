@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var tweetsPerPageSlider = document.querySelector('.js-page-size');
   var tweetsPerPageIndicator = document.querySelector('.js-page-size-indicator');
+  var prevPage = document.querySelector('.js-prev-page');
+  var nextPage = document.querySelector('.js-next-page');
 
   var socket = io.connect();
   var pathname = window.location.pathname;
@@ -18,17 +20,25 @@ document.addEventListener('DOMContentLoaded', function () {
   var tweetList = [];
   var frequencyChart = null;
   var tweetsPerPage = 100;
+  var page = 0;
 
-  function renderTweetList (from) {
-    if (!from) from = 0;
-
+  function renderTweetList () {
     while (tweetsDiv.firstChild) {
       tweetsDiv.removeChild(tweetsDiv.firstChild);
     }
 
-    tweetList.slice(0, tweetsPerPage).forEach(function (tweet) {
+    var start = page * tweetsPerPage;
+    var end = start + tweetsPerPage;
+
+    tweetList.slice(start, end).forEach(function (tweet) {
       tweetsDiv.appendChild(makeTweetDiv(tweet));
     });
+
+    console.log(
+      'rendering page', page,
+      'from', start,
+      'to', end
+    );
   }
 
   if (getRemoteButton) {
@@ -84,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     tweetsCount.textContent = data.length;
-    renderTweetList(0);
+    renderTweetList();
   });
 
   // Got socket of tweets from get/search
@@ -98,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     tweetsCount.textContent = parseInt(tweetsCount.textContent) + data.length;
 
-    renderTweetList(0);
+    renderTweetList();
   });
 
   // Got socket of streamed tweet
@@ -108,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     tweetsCount.textContent = parseInt(tweetsCount.textContent) + 1;
 
-    renderTweetList(0);
+    renderTweetList();
   });
 
   socket.on('getTweetFrequency', function (data) {
@@ -141,14 +151,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function updateTweetsPerPage () {
     var val = tweetsPerPageSlider.value;
+    val = parseInt(val);
 
     if (tweetsPerPageIndicator) tweetsPerPageIndicator.textContent = val;
 
+    page = 0;
     tweetsPerPage = val;
-    renderTweetList(0);
+
+    renderTweetList();
   }
 
   updateTweetsPerPage();
+
+  if (prevPage && nextPage) {
+    prevPage.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      goToPage(page - 1);
+    });
+
+    nextPage.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      goToPage(page + 1);
+    });
+  }
+
+  function goToPage (toPage) {
+    var maxPages = Math.floor(tweetList.length / tweetsPerPage);
+
+    toPage = Math.max(toPage, 0);
+    toPage = Math.min(toPage, maxPages);
+
+    console.log('going to page', toPage);
+
+    page = toPage;
+    renderTweetList();
+  }
 });
 
 function makeTweetDiv (tweet) {
