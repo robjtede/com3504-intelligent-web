@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var socket = io.connect();
   var pathname = window.location.pathname;
 
+  var series = [];
   var tweetList = [];
   var frequencyChart = null;
   var tweetsPerPage = 100;
@@ -58,8 +59,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   socket.on('connect', function () {
     // console.log('connected', socket.id);
-    // Send query
 
+    // Send query
     if (pathname.substring(0, 16) === '/trackings/show/') {
       var trackIdStr = pathname.substring(16);
       var trackId = parseInt(trackIdStr);
@@ -138,22 +139,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     renderTweetList();
 
-    frequencyChart.data.datasets[0].data[6] += 1;
+    series[6].num += 1;
+
+    frequencyChart.data.datasets[0].data = series.map(function (t) { return t.num; });
     frequencyChart.update();
+
+    while (statsTable.firstChild) statsTable.removeChild(statsTable.firstChild);
+    statsTable.appendChild(createTable(series));
   });
 
   socket.on('getTweetFrequency', function (data) {
-    // console.log('got tweet frequency');
+    // console.log('got tweet frequency', data);
     var ctx = chart.getContext('2d');
 
+    data = data.map(function (s) {
+      s.day = new Date(s.day);
+      return s;
+    });
+
     if (!frequencyChart) {
+      series = data;
+
       // Creates and draws the line chart using the data
       frequencyChart = Chart.Line(ctx, {
         data: {
-          labels: data.map(function (t) { return new Date(t.day).getDate() + 'th'; }),
+          labels: series.map(function (t) { return t.day.getDate(); }),
           datasets: [{
             label: 'Frequency',
-            data: data.map(function (t) { return t.num; }),
+            data: series.map(function (t) { return t.num; }),
             fill: false,
             lineTension: 0.3,
             pointRadius: 5,
@@ -177,13 +190,15 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     } else {
       data.forEach(function (day, index) {
-        frequencyChart.data.datasets[0].data[index] += day.num;
+        series[index].num += day.num;
       });
-      frequencyChart.update();
     }
 
+    frequencyChart.data.datasets[0].data = series.map(function (t) { return t.num; });
+    frequencyChart.update();
+
     while (statsTable.firstChild) statsTable.removeChild(statsTable.firstChild);
-    statsTable.appendChild(createTable(data));
+    statsTable.appendChild(createTable(series));
   });
 
   if (tweetsPerPageSlider) {
@@ -295,7 +310,7 @@ function createTable (series) {
     var tdDay = document.createElement('td');
     var tdNum = document.createElement('td');
 
-    tdDay.textContent = new Date(day.day).getDate() + 'th';
+    tdDay.textContent = day.day.getDate() + '/' + day.day.getMonth() + '/' + day.day.getFullYear();
     tdNum.textContent = day.num;
 
     tr.appendChild(tdDay);
