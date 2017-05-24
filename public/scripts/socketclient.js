@@ -70,9 +70,10 @@ document.addEventListener('DOMContentLoaded', function () {
       var profileStr =
         '<div class="playerInfo">' +
           '<img src="' + profileData.imgUrl + '" width="80px">' +
-          '<p>' + profileData.name + '</p>' +
-          '<p>' + profileData.club + '</p>' +
-          '<p>' + profileData.position + '</p>' +
+          '<p> Name: ' + profileData.name + '</p>' +
+          '<p> Club: ' + profileData.club + '</p>' +
+          '<p> Position: ' + profileData.position + '</p>' +
+          '<p> Date of Birth: ' + profileData.dob + '</p>' +
         '</div>';
 
       playerProfileDiv.innerHTML += profileStr;
