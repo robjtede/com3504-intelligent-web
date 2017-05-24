@@ -14,7 +14,9 @@ html
       include header
 
       if trackings
-        include recent-trackings
+        block trackings
+          hr
+          include recent-trackings
 
     div.col
       block main

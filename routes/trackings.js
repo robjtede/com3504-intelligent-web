@@ -8,6 +8,7 @@ module.exports = function (app) {
   app.get('/trackings/show/:id', show);
   app.post('/trackings', list);
   app.get('/trackings', list);
+  app.get('/', list);
 };
 
 function newTrack (req, res) {
@@ -51,7 +52,7 @@ function show (req, res) {
   var recentCache;
   var search;
 
-  return sql.query('SELECT * FROM searches ORDER BY id DESC LIMIT 10')
+  return sql.query('SELECT * FROM searches ORDER BY id DESC LIMIT 4')
     .then(function (recent) {
       recentCache = recent;
       return sql.query('SELECT * FROM searches WHERE id = ?', [req.params.id]);

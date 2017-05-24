@@ -1,22 +1,24 @@
 'use strict';
 
-require('any-promise/register')('bluebird', {Promise: require('bluebird')});
+// Register promise library with any promise
+require('any-promise/register')('bluebird', { Promise: require('bluebird') });
 
+// Express init
 var express = require('express');
-var app = express(); // Express init
+var app = express();
 
 // Setup pug templating engine
 app.set('views', './views');
 app.set('view engine', 'pug');
 
-app.use(express.static('./public')); // Static file serving
+// Static file serving
+app.use(express.static('./public'));
 
-require('./routes/index')(app); // Express routing
-require('./routes/trackings')(app); // Express routing
-// 404
+// Express routing
+require('./routes/trackings')(app);
+
+// Send 404 on missing file/route
 app.use(function (req, res, next) {
-  var reqError = new Error('Page Not Found');
-  reqError.status = 404;
   res.render('404');
 });
 
