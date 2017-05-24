@@ -58,7 +58,7 @@ body > .col:first-child h2 {
   padding: 0 1rem;
 }
 
-body > .col:last-of-type {
+body > .col:nth-child(2) {
   grid-column: 2 / 3;
   padding: 1rem;
 }
