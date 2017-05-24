@@ -95,6 +95,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     tweetsCount.textContent = data.length;
     renderTweetList();
+
+    document.querySelector('.tracking-info .tracking-player').textContent = window.player;
+    document.querySelector('.tracking-info .tracking-team').textContent = window.team;
+    document.querySelector('.tracking-info .tracking-author').textContent = window.author;
+    document.querySelector('.tracking-info .tracking-mode').textContent = window.mode;
   });
 
   // Got socket of tweets from get/search
@@ -133,11 +138,17 @@ document.addEventListener('DOMContentLoaded', function () {
           datasets: [{
             label: 'Frequency',
             data: data.map(function (t) { return t.num; }),
-            fill: false
+            fill: false,
+            lineTension: 0.3,
+            pointRadius: 5,
+            pointHitRadius: 20,
+            borderColor: 'red',
+            pointBorderColor: 'red',
+            pointBackgroundColor: 'red'
           }]
         },
         options: {
-          responsive: false
+          responsive: true
         }
       });
     } else {

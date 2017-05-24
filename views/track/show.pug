@@ -9,12 +9,19 @@ append scripts
     script!= "window.mode = \"" + search.mode + "\""
 
 block main
-  div#playerProfiles
+  div.tracking-info
+    h2 Tracking Info
+    p.tracking-player
+    p.tracking-team
+    p.tracking-author
+    p.tracking-mode
 
   div#remoteTweetsButton
     p Get Remote Tweets
 
-  canvas#myChart(width="1200" height="400")
+  div#playerProfile
+
+  canvas#myChart(width="1000" height="500")
 
   div.page-size
     label(for="js-page-size") Tweets per page:
