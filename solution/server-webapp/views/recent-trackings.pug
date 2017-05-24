@@ -4,7 +4,11 @@ div.recent-trackings
   div.recent-trackings-list
     for tracking in trackings
       div.tracking(onclick="window.location='/trackings/show/" + tracking.id + "'")
-        div.tracking-player= tracking.player
-        div.tracking-team= tracking.team
-        div.tracking-author= tracking.author
-        div.tracking-mode= tracking.mode
+        if tracking.player
+          div.tracking-player= tracking.player
+        if tracking.team
+          div.tracking-team= tracking.team
+        if tracking.author
+          div.tracking-author= tracking.author
+        if tracking.mode
+          div.tracking-mode= tracking.mode

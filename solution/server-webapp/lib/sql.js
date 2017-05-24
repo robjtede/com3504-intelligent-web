@@ -278,7 +278,11 @@ function getConnection () {
     user: db.user,
     password: db.pass,
     database: db.name,
+
+    // to support emoji
     charset: 'utf8mb4',
+
+    // to retrieve tweet_id BIGINTs as strings
     supportBigNumbers: true,
     bigNumberStrings: true
   });

@@ -88,7 +88,6 @@ module.exports = function (io) {
 
     socket.on('requestRemoteTweets', function (client) {
       var searchId = client.trackingId;
-      console.log('SOCKET GET REMOTE WITH ID: ' + searchId);
 
       sql.getSearchFromId(searchId)
         .then(function (results) {
