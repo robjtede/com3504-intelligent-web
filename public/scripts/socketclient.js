@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', function () {
   var tweetsCount = document.querySelector('#tweetCount');
   var playerProfileDiv = document.querySelector('#playerProfiles');
   var getRemoteButton = document.querySelector('#remoteTweetsButton');
+  var chart = document.getElementById('myChart');
 
   var socket = io.connect();
   var pathname = window.location.pathname;
 
   var tweetList = [];
+  var frequencyChart = null;
 
   function renderTweetList (from) {
     if (!from) from = 0;
@@ -107,48 +109,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
   socket.on('getTweetFrequency', function (data) {
     console.log('got tweet frequency');
-    var ctx = document.getElementById('myChart').getContext('2d');
+    var ctx = chart.getContext('2d');
+
+    if (!frequencyChart) {
       // Creates and draws the line chart using the data
-    var myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: Object.keys(data),
-        datasets: [{
-          label: 'Frequency',
-          data: Object.values(data),
-          fill: false
-        }]
-      },
-      options: {
-        responsive: false,
-        scales: {
-          yAxes: [{
-            ticks: {
-              fontColor: 'black',
-              fontSize: 18,
-              stepSize: 100,
-              beginAtZero: true
-            },
-            gridLines: {
-              color: 'rgba(100,100,100,0.5)',
-              zeroLineColor: 'black'
-            }
-          }],
-          xAxes: [{
-            ticks: {
-              fontColor: 'black',
-              fontSize: 14,
-              stepSize: 1,
-              beginAtZero: false
-            },
-            gridLines: {
-              color: 'rgba(100,100,100,0.5)',
-              zeroLineColor: 'black'
-            }
+      frequencyChart = Chart.Line(ctx, {
+        data: {
+          labels: data.map(function (t) { return new Date(t.day).getDate() + 'th'; }),
+          datasets: [{
+            label: 'Frequency',
+            data: data.map(function (t) { return t.num; }),
+            fill: false
           }]
+        },
+        options: {
+          responsive: false
         }
-      }
-    });
+      });
+    } else {
+      frequencyChart;
+    }
   });
 });
 

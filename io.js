@@ -7,18 +7,18 @@ var dbp = require('./lib/dbpedia');
 
 function getCachedTweets (socket, trackingId) {
   // Get stored tweets
-  sql.getTweets(trackingId)
+  return sql.getTweets(trackingId)
     .then(function (results) {
       // Send tweets to client
       socket.emit('cachedTweets', results);
 
       // Send frequencies to client
-      socket.emit('getTweetFrequency', results.reduce(groupTweet, {}));
+      socket.emit('getTweetFrequency', series(results.reduce(groupTweet, {})));
     });
 }
 
 function getRemoteTweets (socket, q, searchId) {
-  twitter
+  return twitter
     .search(q)
     .then(function (data) {
       var tweets = data.tweets;
@@ -38,11 +38,8 @@ function getRemoteTweets (socket, q, searchId) {
         socket.emit('getRemoteTweets', tweets);
 
         // count per day frequency
-        socket.emit('getTweetFrequency', tweets.reduce(groupTweet, {}));
+        socket.emit('getTweetFrequency', series(tweets.reduce(groupTweet, {})));
       }
-    }).catch(function (err) {
-      console.error(err);
-      throw new Error(err);
     });
 }
 
@@ -66,6 +63,9 @@ module.exports = function (io) {
           .then(function (searchId) {
             console.log('Tracking ID created or existing found: ' + searchId);
             socket.emit('NewTrackingID', searchId);
+          })
+          .catch(function (err) {
+            console.error(err);
           });
       }
     });
@@ -80,6 +80,9 @@ module.exports = function (io) {
             // Has results
             socket.emit('serverTrackingsList', results);
           }
+        })
+        .catch(function (err) {
+          console.error(err);
         });
     });
 
@@ -92,7 +95,10 @@ module.exports = function (io) {
           var q = results[0];
           if (q) {
             // Now retrieve more tweets from twitter, and add to page
-            getRemoteTweets(socket, q, searchId);
+            getRemoteTweets(socket, q, searchId)
+              .catch(function (err) {
+                console.error(err);
+              });
             // TODO fix issue of too many tweets crashing page, perhaps just limit amount of streamed tweets
 
             // Start streaming tweets
@@ -112,10 +118,16 @@ module.exports = function (io) {
               };
 
               // Insert into db
-              sql.insertTweet(formattedTweet, searchId);
+              sql.insertTweet(formattedTweet, searchId)
+                .then(function (err) {
+                  console.error(err);
+                });
 
               // update max id of search
-              sql.updateSearchNewestTweet(searchId, formattedTweet.tweet_id);
+              sql.updateSearchNewestTweet(searchId, formattedTweet.tweet_id)
+                .catch(function (err) {
+                  console.error(err);
+                });
 
               // Send tweet to page
               socket.emit('streamedTweet', formattedTweet);
@@ -152,40 +164,42 @@ module.exports = function (io) {
             // Initialise set to track existing ids (prevent duplicate tweets)
 
             // Get tweets from database
-            getCachedTweets(socket, searchId);
+            getCachedTweets(socket, searchId)
+              .catch(function (err) {
+                console.error(err);
+              });
 
             dbp.findPlayer(socket, q);
           } else {
             // No search, invalid id or error
             // TODO handle
           }
+        })
+        .catch(function (err) {
+          console.error(err);
         });
     });
-	
-		
-	socket.on('getTableSearches', function (){
-		sql.getSearchesTable().then(function(results){
-			if(results) {
-				socket.emit('tableSearches', results);
-			}
-			
-		});
-	});
-	
-	socket.on('getTableTweets', function (){
-		sql.getTweetsTable().then(function(results){
-			if(results) {
-				socket.emit('tableTweets', results);
-			}
-		});
-		
-	});
-	
-	socket.on('getlocalCachedTweets', function(id){
-		console.log('getlocal');
-		socket.emit('localCachedTweets', id);
-	});
-	
+
+    socket.on('getTableSearches', function () {
+      sql.getSearchesTable().then(function (results) {
+        if (results) {
+          socket.emit('tableSearches', results);
+        }
+      });
+    });
+
+    socket.on('getTableTweets', function () {
+      sql.getTweetsTable().then(function (results) {
+        if (results) {
+          socket.emit('tableTweets', results);
+        }
+      });
+    });
+
+    socket.on('getlocalCachedTweets', function (id) {
+      console.log('getlocal');
+      socket.emit('localCachedTweets', id);
+    });
   });
 };
 
@@ -210,5 +224,21 @@ function groupTweet (days, tweet) {
   return days;
 }
 
+function series (groups) {
+  var series = [];
 
+  for (var day in groups) {
+    if (groups.hasOwnProperty(day)) {
+      series.push({
+        day: new Date(day).getTime(),
+        num: groups[day]
+      });
+    }
+  }
 
+  series = series.sort(function (a, b) {
+    return a.day < b.day ? -1 : 1;
+  });
+
+  return series;
+}
