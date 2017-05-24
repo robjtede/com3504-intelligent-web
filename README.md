@@ -1,6 +1,8 @@
 COM3504 Assignment - Team 090
 =============================
-Ben Clegg, Sam Dickinson, and Rob Ede
+
+[Ben Clegg](https://github.com/BenClegg), [Sam Dickinson](https://github.com/coa12sd), and [Rob Ede](https://github.com/robjtede)
+
 Combined request server and webapp, plus Cordova hybrid mobile app client.
 
 This server runs on Node v0.12.4 and above.
