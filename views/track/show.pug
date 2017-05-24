@@ -21,7 +21,10 @@ block main
 
   div#playerProfile
 
-  canvas#myChart(width="1000" height="500")
+  div.stats
+    div.chart
+      canvas#myChart(width="1000" height="500")
+    div.table
 
   div.page-size
     label(for="js-page-size") Tweets per page:

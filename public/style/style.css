@@ -165,6 +165,33 @@ nav a:hover {
   text-align: right;
 }
 
+.stats {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.stats .table,
+.stats .chart {
+  flex: 1 0 200px;
+}
+
+.stats .table table {
+  border-collapse: collapse;
+}
+
+.stats .table table td {
+  padding: 0.5em;
+  border: 1px solid black;
+}
+
+.stats .table table tr:last-child td {
+  font-weight: bold;
+}
+
+.stats .table table tr:nth-child(2n) td {
+  background: hsl(0, 0%, 95%);
+}
+
 .page-size {
   bottom: 1px solid black;
 }

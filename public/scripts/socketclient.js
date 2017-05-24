@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var playerProfileDiv = document.querySelector('#playerProfiles');
   var getRemoteButton = document.querySelector('#remoteTweetsButton');
   var chart = document.querySelector('#myChart');
+  var statsTable = document.querySelector('.stats .table');
 
   var tweetsPerPageSlider = document.querySelector('.js-page-size');
   var tweetsPerPageIndicator = document.querySelector('.js-page-size-indicator');
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var socket = io.connect();
   var pathname = window.location.pathname;
 
+  var series = [];
   var tweetList = [];
   var frequencyChart = null;
   var tweetsPerPage = 100;
@@ -149,7 +151,8 @@ document.addEventListener('DOMContentLoaded', function () {
           scales: {
             yAxes: [{
               ticks: {
-                min: 0
+                beginAtZero: true,
+                suggestedMax: 1
               }
             }]
           }
@@ -161,6 +164,9 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       frequencyChart.update();
     }
+
+    while (statsTable.firstChild) statsTable.removeChild(statsTable.firstChild);
+    statsTable.appendChild(createTable(data));
   });
 
   if (tweetsPerPageSlider) {
@@ -251,4 +257,45 @@ function makeTweetDiv (tweet) {
   $tweet.appendChild($tweetTime);
 
   return $tweet;
+}
+
+function createTable (series) {
+  var table = document.createElement('table');
+
+  var trTitle = document.createElement('tr');
+  var tdDayTitle = document.createElement('td');
+  tdDayTitle.textContent = 'Day';
+
+  var tdNumTitle = document.createElement('td');
+  tdNumTitle.textContent = 'No. of Tweets';
+
+  trTitle.appendChild(tdDayTitle);
+  trTitle.appendChild(tdNumTitle);
+  table.appendChild(trTitle);
+
+  series.forEach(function (day) {
+    var tr = document.createElement('tr');
+    var tdDay = document.createElement('td');
+    var tdNum = document.createElement('td');
+
+    tdDay.textContent = new Date(day.day).getDate() + 'th';
+    tdNum.textContent = day.num;
+
+    tr.appendChild(tdDay);
+    tr.appendChild(tdNum);
+    table.appendChild(tr);
+  });
+
+  var tr = document.createElement('tr');
+  var tdTotalTitle = document.createElement('td');
+  tdTotalTitle.textContent = 'Total';
+
+  var tdTotal = document.createElement('td');
+  tdTotal.textContent = series.reduce(function (acc, d) { return acc + d.num; }, 0);
+
+  tr.appendChild(tdTotalTitle);
+  tr.appendChild(tdTotal);
+  table.appendChild(tr);
+
+  return table;
 }
