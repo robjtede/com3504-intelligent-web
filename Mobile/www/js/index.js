@@ -59,14 +59,14 @@ var app = {
 			'`searches_id` INT NOT NULL,' +
 			'FOREIGN KEY(`searches_id`) REFERENCES `searches`(`id`)' +
 			') DEFAULT CHARSET=utf8mb4;' +
-			'CREATE UNIQUE INDEX tweets_uid ON tweets (Tweet_ID);', [],
-                function (tx, result) {
+			'CREATE UNIQUE INDEX tweets_uid ON tweets (Tweet_ID);');
+        }, function (tx, result) {
                     alert("Table created successfully");
                 },
                 function (error) {
                     alert("Error occurred while creating the table.");
                 });
-        });
+        
 		
 		document.getElementById("submitSearchForm").addEventListener("click", submitSearchForm);
 		document.getElementById("defaultOpen").addEventListener("click", getTrackingsList);
