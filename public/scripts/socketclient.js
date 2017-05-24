@@ -33,12 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
     tweetList.slice(start, end).forEach(function (tweet) {
       tweetsDiv.appendChild(makeTweetDiv(tweet));
     });
-
-    console.log(
-      'rendering page', page,
-      'from', start,
-      'to', end
-    );
   }
 
   if (getRemoteButton) {
@@ -106,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
   socket.on('getRemoteTweets', function (data) {
     console.log('got remote tweets');
 
-    data.forEach(function (tweet) {
+    data.reverse().forEach(function (tweet) {
       tweet.dataSource = 'remote';
       tweetList.unshift(tweet);
     });
@@ -141,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fill: false,
             lineTension: 0.3,
             pointRadius: 5,
-            pointHitRadius: 20,
+            pointHitRadius: 40,
             borderColor: 'red',
             pointBorderColor: 'red',
             pointBackgroundColor: 'red'
