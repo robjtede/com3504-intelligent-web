@@ -23,7 +23,6 @@ function create (req, res) {
   var q = req.query;
 
   if (q.player || q.team || q.author) {
-    // TODO change to switch button
     var isAndMode = q.querymode;
 
     sql.newSearch(q, isAndMode)

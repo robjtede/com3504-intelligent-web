@@ -127,6 +127,18 @@ nav a:hover {
   content: 'Author: ';
 }
 
+.tracking-mode::before {
+  content: 'Mode: ';
+}
+
+.tracking-info p {
+  margin: 0.2em 0;
+}
+
+.tracking-info h2 {
+  margin: 0.2em 0;
+}
+
 #tweetcount {
   padding-top: 5px;
   padding-bottom: 5px;
@@ -288,7 +300,7 @@ nav a:hover {
 #remoteTweetsButton {
   background-color: hsl(0, 70%, 45%);
   color: #FFFFFF;
-  cursor:pointer;
+  cursor: pointer;
   padding: 4px 8px;
   font-weight: bold;
   text-decoration: underline;

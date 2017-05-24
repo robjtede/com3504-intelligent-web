@@ -1,13 +1,5 @@
 extends ../layout
 
-append scripts
-  if search
-    script!= "window.player = \"" + search.player + "\""
-    script!= "window.team = \"" + search.team + "\""
-    script!= "window.author = \"" + search.author + "\""
-    script!= "window.newestTweet = " + search.newestTweet
-    script!= "window.mode = \"" + search.mode + "\""
-
 block main
   div.tracking-info
     h2 Tracking Info

@@ -161,6 +161,8 @@ module.exports = function (io) {
             // Search found, start sending tweets to client
             // Initialise set to track existing ids (prevent duplicate tweets)
 
+            socket.emit('trackingInfo', q);
+
             // Get tweets from database
             getCachedTweets(socket, searchId)
               .catch(function (err) {

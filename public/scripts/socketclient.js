@@ -66,6 +66,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  socket.on('trackingInfo', function (q) {
+    console.log('get tracking info');
+    console.log(q);
+
+    var playerEl = document.querySelector('.tracking-info .tracking-player');
+    var teamEl = document.querySelector('.tracking-info .tracking-team');
+    var authorEl = document.querySelector('.tracking-info .tracking-author');
+    var modeEl = document.querySelector('.tracking-info .tracking-mode');
+
+    if (!q.terms_player && playerEl) playerEl.style.display = 'none';
+    if (!q.terms_team && teamEl) teamEl.style.display = 'none';
+    if (!q.terms_author && authorEl) authorEl.style.display = 'none';
+    if (!q.search_mode && modeEl) modeEl.style.display = 'none';
+
+    if (playerEl) playerEl.textContent = q.terms_player;
+    if (teamEl) teamEl.textContent = q.terms_team;
+    if (authorEl) authorEl.textContent = q.terms_author;
+    if (modeEl) modeEl.textContent = q.search_mode;
+  });
+
   // Add player profile info
   if (playerProfileDiv) {
     socket.on('playerProfile', function (profileData) {
@@ -97,11 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       requestRemoteTweets();
     }
-
-    document.querySelector('.tracking-info .tracking-player').textContent = window.player;
-    document.querySelector('.tracking-info .tracking-team').textContent = window.team;
-    document.querySelector('.tracking-info .tracking-author').textContent = window.author;
-    document.querySelector('.tracking-info .tracking-mode').textContent = window.mode;
   });
 
   // Got socket of tweets from get/search
