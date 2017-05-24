@@ -6,7 +6,7 @@ USE com3504assignment_bcsdre;
 
 
 SET NAMES utf8mb4;
-ALTER DATABASE team090 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+ALTER DATABASE com3504assignment_bcsdre CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `tweets`;
 DROP TABLE IF EXISTS `searches`;
@@ -24,6 +24,8 @@ CREATE TABLE `tweets` (
   `local_id` BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `tweet_id` BIGINT(20) NOT NULL,
   `author` VARCHAR(255) NOT NULL,
+  `real_name` VARCHAR(255) NOT NULL,
+  `avatar_url` TEXT,
   `datetime` DATETIME NOT NULL,
   `content` TEXT NOT NULL,
   `searches_id` INT NOT NULL,

@@ -9,13 +9,33 @@ append scripts
     script!= "window.mode = \"" + search.mode + "\""
 
 block main
-  div#playerProfiles
+  div.tracking-info
+    h2 Tracking Info
+    p.tracking-player
+    p.tracking-team
+    p.tracking-author
+    p.tracking-mode
 
   div#remoteTweetsButton
     p Get Remote Tweets
 
-  canvas#myChart(width="1200" height="400")
+  div#playerProfile
+
+  div.stats
+    div.chart
+      canvas#myChart(width="1000" height="500")
+    div.table
+
+  div.page-size
+    label(for="js-page-size") Tweets per page:
+    input(type="range" min="10" max="200" step="10", value="60")#js-page-size.js-page-size
+    span.js-page-size-indicator -
 
   div#tweetCount
+
+  div.page-nav.js-page-nav
+    a.prev-page.js-prev-page(href="#") &larr; Prev Page
+    | &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    a.next-page.js-next-page(href="#") Next Page &rarr;
 
   div#tweetList
