@@ -6,6 +6,11 @@ var moment = require('moment');
 var Promise = require('any-promise');
 var mysql = require('mysql');
 
+/**
+ * Gets all tweets for a given search/tracking
+ * @param  {number}  id Search/tracking ID
+ * @return {promise}    Resolves with query results
+ */
 var getTweets = function (id) {
   var sqlQuery =
     'SELECT * FROM tweets' +
@@ -28,6 +33,12 @@ var getTweets = function (id) {
     });
 };
 
+/**
+ * Adds multiple tweets to database
+ * @param  {array}   tweets   Simplified Tweets objects list
+ * @param  {number}  searchId Search/tracking ID
+ * @return {promise}          Resolves with query results
+ */
 function insertTweetMulti (tweets, searchId) {
   if (!tweets.length) return Promise.reject(new Error('tweet list cannot be empty'));
 
@@ -53,6 +64,12 @@ function insertTweetMulti (tweets, searchId) {
   return query(sqlQuery, values);
 };
 
+/**
+ * Adds a single tweet to database
+ * @param  {object}  tweet    Simplified Tweet object
+ * @param  {number}  searchId Search/tracking ID
+ * @return {promise}          Resolves with query results
+ */
 function insertTweet (tweet, searchId) {
   if (!tweet) return Promise.reject(new Error('tweet object not provided'));
 
@@ -67,6 +84,14 @@ function insertTweet (tweet, searchId) {
   return query(sqlQuery, [tweet.tweetId, tweet.author, time, text, searchId, tweet.avatarUrl, tweet.name]);
 };
 
+/**
+ * Adds new search/tracking to database (without duplication checks)
+ * @param  {string}  termPlayer Search/tracking player(s)
+ * @param  {string}  termTeam   Search/tracking team(s)
+ * @param  {string}  termAuthor Search/tracking author(s)
+ * @param  {boolean} isAnd      Mode switch
+ * @return {promise}            Resolves with query results
+ */
 function addSearch (termPlayer, termTeam, termAuthor, isAnd) {
   var modeStr = isAnd ? 'AND' : 'OR';
   var sqlQuery =
@@ -77,6 +102,12 @@ function addSearch (termPlayer, termTeam, termAuthor, isAnd) {
   return query(sqlQuery, [termPlayer, termTeam, termAuthor, modeStr]);
 };
 
+/**
+ * Add new search/tracking to database (with duplication checks)
+ * @param  {object}  q     Search/tracking parameters
+ * @param  {boolean} isAnd Mode switch
+ * @return {promise}       Resolves with query results
+ */
 function newSearch (q, isAnd) {
   // // Create a new search / tracking, after checking it doesn't already exist.
   // // return the id of the already present or new search
@@ -168,6 +199,11 @@ function newSearch (q, isAnd) {
 //     });
 // };
 
+/**
+ * Get single search from database
+ * @param  {number}  id Search/tracking ID
+ * @return {promise}    Resolves with query results
+ */
 function getSearchTermsFromId (id) {
   var sqlQuery =
     'SELECT *' +
@@ -188,6 +224,12 @@ function getSearchTermsFromId (id) {
     });
 }
 
+/**
+ * Updates search/tracking newest Tweet ID in database
+ * @param  {number}  id            Search/tracking ID
+ * @param  {string}  newestTweetId New maximum Tweet ID for search/tracking
+ * @return {promise}               Resolves with query results
+ */
 function updateSearchNewestTweet (id, newestTweetId) {
   var sqlQuery =
     'UPDATE searches' +
@@ -197,6 +239,10 @@ function updateSearchNewestTweet (id, newestTweetId) {
   return query(sqlQuery, [newestTweetId, id]);
 }
 
+/**
+ * Get searches/trackings list from database
+ * @return {promise} Resolves with query results
+ */
 function getSearchList () {
   var sqlQuery =
     'SELECT *' +
@@ -206,24 +252,11 @@ function getSearchList () {
   return query(sqlQuery);
 }
 
-function query (query, params, conn) {
-  if (!conn) conn = getConnection();
-
-  return new Promise(function (resolve, reject) {
-    conn.query({
-      sql: query,
-      values: params,
-      timeout: 40000
-    }, function (error, results, fields) {
-      conn.end();
-      if (error) reject(new Error(error));
-
-      resolve(results);
-    });
-  });
-}
-
-// Get player's real name from manually stored Twitter handle (screenname)
+/**
+ * Get player's real name database
+ * @param  {string} screenName Twitter handle
+ * @return {promise}           Resolves with query results
+ */
 function getPlayerRealName (screenName) {
   var sqlQuery =
     'SELECT *' +
@@ -233,6 +266,10 @@ function getPlayerRealName (screenName) {
   return query(sqlQuery, [screenName]);
 }
 
+/**
+ * Get entire searches/trackings table from database
+ * @return {promise} Resolves with query results
+ */
 function getSearchesTable () {
   var sqlQuery =
     'SELECT * ' +
@@ -252,6 +289,10 @@ function getSearchesTable () {
     });
 }
 
+/**
+ * Get entire tweets table from database
+ * @return {promise} Resolves with query results
+ */
 function getTweetsTable () {
   var sqlQuery =
     'SELECT *' +
@@ -271,6 +312,34 @@ function getTweetsTable () {
     });
 }
 
+/**
+ * Promisified database query helper
+ * @param  {string}  query  SQL query (including ? placeholders)
+ * @param  {array}   params Placeholder values to be sanitised
+ * @param  {object}  conn   Optional. MySQL connection object
+ * @return {promise}        Resolves with query results
+ */
+function query (query, params, conn) {
+  if (!conn) conn = getConnection();
+
+  return new Promise(function (resolve, reject) {
+    conn.query({
+      sql: query,
+      values: params,
+      timeout: 40000
+    }, function (error, results, fields) {
+      conn.end();
+      if (error) reject(new Error(error));
+
+      resolve(results);
+    });
+  });
+}
+
+/**
+ * Creates new database connection pbject
+ * @return {Object} MySQL connection object
+ */
 function getConnection () {
   return mysql.createConnection({
     host: db.host,
@@ -288,6 +357,12 @@ function getConnection () {
   });
 }
 
+/**
+ * Formats date strings consistently
+ * @param  {string}  date  Date string
+ * @param  {boolean} human True for human readable
+ * @return {string}        Formatted date string
+ */
 function formatDate (date, human) {
   var fmt = human
     ? 'h:mm A - D MMM YYYY'
