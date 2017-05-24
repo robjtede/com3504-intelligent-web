@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   socket.on('connect', function () {
-    console.log('connected', socket.id);
+    // console.log('connected', socket.id);
     // Send query
 
     if (pathname.substring(0, 16) === '/trackings/show/') {
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Got socket of tweets from database
   socket.on('cachedTweets', function (data) {
-    console.log('got cached tweets');
+    // console.log('got cached tweets');
 
     data.forEach(function (tweet) {
       tweet.dataSource = 'cache';
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Got socket of tweets from get/search
   socket.on('getRemoteTweets', function (data) {
-    console.log('got remote tweets');
+    // console.log('got remote tweets');
 
     data.reverse().forEach(function (tweet) {
       tweet.dataSource = 'remote';
@@ -118,10 +118,13 @@ document.addEventListener('DOMContentLoaded', function () {
     tweetsCount.textContent = parseInt(tweetsCount.textContent) + 1;
 
     renderTweetList();
+
+    frequencyChart.data.datasets[0].data[6] += 1;
+    frequencyChart.update();
   });
 
   socket.on('getTweetFrequency', function (data) {
-    console.log('got tweet frequency');
+    // console.log('got tweet frequency');
     var ctx = chart.getContext('2d');
 
     if (!frequencyChart) {
@@ -153,7 +156,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
     } else {
-      frequencyChart;
+      data.forEach(function (day, index) {
+        frequencyChart.data.datasets[0].data[index] += day.num;
+      });
+      frequencyChart.update();
     }
   });
 
@@ -192,8 +198,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     toPage = Math.max(toPage, 0);
     toPage = Math.min(toPage, maxPages);
-
-    console.log('going to page', toPage);
 
     page = toPage;
     renderTweetList();
