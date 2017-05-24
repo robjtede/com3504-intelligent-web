@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var socket = io.connect();
   var pathname = window.location.pathname;
 
-  var series = [];
   var tweetList = [];
   var frequencyChart = null;
   var tweetsPerPage = 100;
