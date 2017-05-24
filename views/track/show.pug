@@ -16,6 +16,11 @@ block main
 
   canvas#myChart(width="1200" height="400")
 
+  div.page-size
+    label(for="js-page-size") Tweets per page:
+    input(type="range" min="10" max="200" step="10", value="60")#js-page-size.js-page-size
+    span.js-page-size-indicator -
+
   div#tweetCount
 
   div#tweetList

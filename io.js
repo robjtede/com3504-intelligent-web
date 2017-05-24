@@ -12,6 +12,8 @@ function getCachedTweets (socket, trackingId) {
       // Send tweets to client
       socket.emit('cachedTweets', results);
 
+      console.log(results[0]);
+
       // Send frequencies to client
       socket.emit('getTweetFrequency', series(results.reduce(groupTweet, {})));
     });
@@ -205,7 +207,7 @@ module.exports = function (io) {
 
 function formatDate (date, human) {
   var fmt = human
-    ? 'h:m A - D MMM YYYY'
+    ? 'h:mm A - D MMM YYYY'
     : 'YYYY-MM-DD HH:mm:ss';
 
   return moment(
@@ -239,6 +241,8 @@ function series (groups) {
   series = series.sort(function (a, b) {
     return a.day < b.day ? -1 : 1;
   });
+
+  console.log(series);
 
   return series;
 }

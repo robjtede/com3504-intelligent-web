@@ -165,6 +165,14 @@ nav a:hover {
   text-align: right;
 }
 
+.page-size {
+  bottom: 1px solid black;
+}
+
+.page-size input {
+  margin: 0 1em;
+}
+
 .tweet {
   border-radius: 8px;
   display: grid;
@@ -237,7 +245,6 @@ nav a:hover {
 .tweet-body {
   grid-area: content;
 }
-
 
 .tweet.tweet-cache {
   border-color: hsl(220, 50%, 70%);

@@ -7,13 +7,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var tweetsCount = document.querySelector('#tweetCount');
   var playerProfileDiv = document.querySelector('#playerProfiles');
   var getRemoteButton = document.querySelector('#remoteTweetsButton');
-  var chart = document.getElementById('myChart');
+  var chart = document.querySelector('#myChart');
+
+  var tweetsPerPageSlider = document.querySelector('.js-page-size');
+  var tweetsPerPageIndicator = document.querySelector('.js-page-size-indicator');
 
   var socket = io.connect();
   var pathname = window.location.pathname;
 
   var tweetList = [];
   var frequencyChart = null;
+  var tweetsPerPage = 100;
 
   function renderTweetList (from) {
     if (!from) from = 0;
@@ -22,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
       tweetsDiv.removeChild(tweetsDiv.firstChild);
     }
 
-    tweetList.slice(0, 60).forEach(function (tweet) {
+    tweetList.slice(0, tweetsPerPage).forEach(function (tweet) {
       tweetsDiv.appendChild(makeTweetDiv(tweet));
     });
   }
@@ -130,6 +134,21 @@ document.addEventListener('DOMContentLoaded', function () {
       frequencyChart;
     }
   });
+
+  if (tweetsPerPageSlider) {
+    tweetsPerPageSlider.addEventListener('change', updateTweetsPerPage);
+  }
+
+  function updateTweetsPerPage () {
+    var val = tweetsPerPageSlider.value;
+
+    if (tweetsPerPageIndicator) tweetsPerPageIndicator.textContent = val;
+
+    tweetsPerPage = val;
+    renderTweetList(0);
+  }
+
+  updateTweetsPerPage();
 });
 
 function makeTweetDiv (tweet) {
