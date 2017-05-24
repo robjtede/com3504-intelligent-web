@@ -28,31 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var tweetsPerPage = 100;
   var page = 0;
 
-  function renderTweetList () {
-    while (tweetsDiv.firstChild) {
-      tweetsDiv.removeChild(tweetsDiv.firstChild);
-    }
-
-    var start = page * tweetsPerPage;
-    var end = start + tweetsPerPage;
-
-    tweetList.slice(start, end).forEach(function (tweet) {
-      tweetsDiv.appendChild(makeTweetDiv(tweet));
-    });
-  }
-
-  function requestRemoteTweets () {
-    if (pathname.substring(0, 16) === '/trackings/show/') {
-      var trackIdStr = pathname.substring(16);
-      var trackId = parseInt(trackIdStr);
-      socket.emit('requestRemoteTweets', {
-        path: pathname,
-        trackingId: trackId
-      });
-      getRemoteButton.style.display = 'none';
-    }
-  }
-
   if (getRemoteButton) {
     getRemoteButton.addEventListener('click', requestRemoteTweets);
   }
@@ -86,26 +61,27 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Add player profile info
-  if (playerProfileDiv) {
-    socket.on('playerProfile', function (profileData) {
-      var profileStr =
-        '<div class="player-info">' +
-          '<img src="' + profileData.imgUrl + '" width="80px">' +
-          '<p class="player-info-name">' + profileData.name + '</p>' +
-          '<p class="player-info-club">' + profileData.club + '</p>' +
-          '<p class="player-info-pos">' + profileData.position + '</p>' +
-          '<p class="player-info-dob">' + profileData.dob + '</p>' +
-        '</div>';
+  socket.on('playerProfile', function (profileData) {
+    var profileStr =
+      '<div class="player-info">' +
+        '<img src="' + profileData.imgUrl + '" width="80px">' +
+        '<p class="player-info-name">' + profileData.name + '</p>' +
+        '<p class="player-info-club">' + profileData.club + '</p>' +
+        '<p class="player-info-pos">' + profileData.position + '</p>' +
+        '<p class="player-info-dob">' + profileData.dob + '</p>' +
+      '</div>';
 
+    if (playerProfileDiv) {
       playerProfileDiv.innerHTML += profileStr;
       playerProfileDiv.style.display = 'block';
-    });
-  }
+    }
+  });
 
-  // Got socket of tweets from database
+  // Recieved tweets from database
   socket.on('cachedTweets', function (data) {
     console.log('got cached tweets');
 
+    // add each to beginning of tweet array
     data.forEach(function (tweet) {
       tweet.dataSource = 'cache';
       tweetList.unshift(tweet);
@@ -118,10 +94,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Got socket of tweets from get/search
+  // Recieved tweets from get/search
   socket.on('getRemoteTweets', function (data) {
     console.log('got remote tweets');
 
+    // add each to beginning of tweet array
     data.reverse().forEach(function (tweet) {
       tweet.dataSource = 'remote';
       tweetList.unshift(tweet);
@@ -130,38 +107,38 @@ document.addEventListener('DOMContentLoaded', function () {
     renderTweetList();
   });
 
-  // Got socket of streamed tweet
+  // Recieved streamed tweet
   socket.on('streamedTweet', function (tweet) {
     console.log('got streamed tweet');
 
     tweet.dataSource = 'stream';
+
+    // add to beginning of tweet array
     tweetList.unshift(tweet);
 
     renderTweetList();
 
     series[6].num += 1;
-
-    frequencyChart.data.datasets[0].data = series.map(function (t) { return t.num; });
-    frequencyChart.update();
-
-    while (statsTable.firstChild) statsTable.removeChild(statsTable.firstChild);
-    statsTable.appendChild(createTable(series));
+    updateStats();
   });
 
+  // Recieved tweet frequencies
   socket.on('getTweetFrequency', function (data) {
     // console.log('got tweet frequency', data);
-    var ctx = chart.getContext('2d');
 
+    // map time strings to Date objects
     data = data.map(function (s) {
       s.day = new Date(s.day);
       return s;
     });
 
+    // if chart does not exist create it
     if (!frequencyChart) {
+      // store initial data
       series = data;
 
-      // Creates and draws the line chart using the data
-      frequencyChart = Chart.Line(ctx, {
+      // create and draw line chart
+      frequencyChart = Chart.Line(chart.getContext('2d'), {
         data: {
           labels: series.map(function (t) { return t.day.getDate(); }),
           datasets: [{
@@ -182,27 +159,53 @@ document.addEventListener('DOMContentLoaded', function () {
             yAxes: [{
               ticks: {
                 beginAtZero: true,
-                suggestedMax: 1
+                suggestedMax: 5
               }
             }]
           }
         }
       });
     } else {
+      // update stats data
       data.forEach(function (day, index) {
         series[index].num += day.num;
       });
     }
 
+    updateStats();
+  });
+
+  function updateStats () {
     frequencyChart.data.datasets[0].data = series.map(function (t) { return t.num; });
     frequencyChart.update();
 
     while (statsTable.firstChild) statsTable.removeChild(statsTable.firstChild);
     statsTable.appendChild(createTable(series));
-  });
+  }
 
-  if (tweetsPerPageSlider) {
-    tweetsPerPageSlider.addEventListener('change', updateTweetsPerPage);
+  function renderTweetList () {
+    while (tweetsDiv.firstChild) {
+      tweetsDiv.removeChild(tweetsDiv.firstChild);
+    }
+
+    var start = page * tweetsPerPage;
+    var end = start + tweetsPerPage;
+
+    tweetList.slice(start, end).forEach(function (tweet) {
+      tweetsDiv.appendChild(makeTweetDiv(tweet));
+    });
+  }
+
+  function requestRemoteTweets () {
+    if (pathname.substring(0, 16) === '/trackings/show/') {
+      var trackIdStr = pathname.substring(16);
+      var trackId = parseInt(trackIdStr);
+      socket.emit('requestRemoteTweets', {
+        path: pathname,
+        trackingId: trackId
+      });
+      getRemoteButton.style.display = 'none';
+    }
   }
 
   function updateTweetsPerPage () {
@@ -218,6 +221,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   updateTweetsPerPage();
+  if (tweetsPerPageSlider) {
+    tweetsPerPageSlider.addEventListener('change', updateTweetsPerPage);
+  }
 
   if (prevPage && nextPage) {
     prevPage.addEventListener('click', function (ev) {
@@ -240,94 +246,94 @@ document.addEventListener('DOMContentLoaded', function () {
     page = toPage;
     renderTweetList();
   }
-});
 
-function makeTweetDiv (tweet) {
-  var $tweet = document.createElement('div');
-  $tweet.classList.add('tweet');
-  $tweet.classList.add('tweet-' + tweet.dataSource);
+  function makeTweetDiv (tweet) {
+    var $tweet = document.createElement('div');
+    $tweet.classList.add('tweet');
+    $tweet.classList.add('tweet-' + tweet.dataSource);
 
-  var $tweetAuthor = document.createElement('p');
-  var $tweetAvatar = document.createElement('div');
-  var $tweetBody = document.createElement('p');
-  var $tweetId = document.createElement('p');
-  var $tweetName = document.createElement('p');
-  var $tweetTime = document.createElement('p');
+    var $tweetAuthor = document.createElement('p');
+    var $tweetAvatar = document.createElement('div');
+    var $tweetBody = document.createElement('p');
+    var $tweetId = document.createElement('p');
+    var $tweetName = document.createElement('p');
+    var $tweetTime = document.createElement('p');
 
-  $tweetAuthor.classList.add('tweet-author');
-  $tweetAvatar.classList.add('tweet-avatar');
-  $tweetBody.classList.add('tweet-body');
-  $tweetId.classList.add('tweet-id');
-  $tweetName.classList.add('tweet-name');
-  $tweetTime.classList.add('tweet-time');
+    $tweetAuthor.classList.add('tweet-author');
+    $tweetAvatar.classList.add('tweet-avatar');
+    $tweetBody.classList.add('tweet-body');
+    $tweetId.classList.add('tweet-id');
+    $tweetName.classList.add('tweet-name');
+    $tweetTime.classList.add('tweet-time');
 
-  var $tweetLink = document.createElement('a');
-  var $tweetAuthorLink = document.createElement('a');
-  var $tweetAvatarImg = document.createElement('img');
+    var $tweetLink = document.createElement('a');
+    var $tweetAuthorLink = document.createElement('a');
+    var $tweetAvatarImg = document.createElement('img');
 
-  $tweetBody.textContent = tweet.content;
-  $tweetTime.textContent = tweet.datetime_human;
-  $tweetName.textContent = tweet.name;
+    $tweetBody.textContent = tweet.content;
+    $tweetTime.textContent = tweet.datetime_human;
+    $tweetName.textContent = tweet.name;
 
-  $tweetLink.href = 'https://twitter.com/' + tweet.author + '/status/' + tweet.tweetId;
-  $tweetLink.textContent = tweet.tweetId;
+    $tweetLink.href = 'https://twitter.com/' + tweet.author + '/status/' + tweet.tweetId;
+    $tweetLink.textContent = tweet.tweetId;
 
-  $tweetAuthorLink.href = 'https://twitter.com/' + tweet.author;
-  $tweetAuthorLink.textContent = tweet.author;
+    $tweetAuthorLink.href = 'https://twitter.com/' + tweet.author;
+    $tweetAuthorLink.textContent = tweet.author;
 
-  $tweetAvatarImg.src = tweet.avatarUrl;
+    $tweetAvatarImg.src = tweet.avatarUrl;
 
-  $tweetId.appendChild($tweetLink);
-  $tweetAuthor.appendChild($tweetAuthorLink);
-  $tweetAvatar.appendChild($tweetAvatarImg);
+    $tweetId.appendChild($tweetLink);
+    $tweetAuthor.appendChild($tweetAuthorLink);
+    $tweetAvatar.appendChild($tweetAvatarImg);
 
-  $tweet.appendChild($tweetAuthor);
-  $tweet.appendChild($tweetAvatar);
-  $tweet.appendChild($tweetBody);
-  $tweet.appendChild($tweetId);
-  $tweet.appendChild($tweetName);
-  $tweet.appendChild($tweetTime);
+    $tweet.appendChild($tweetAuthor);
+    $tweet.appendChild($tweetAvatar);
+    $tweet.appendChild($tweetBody);
+    $tweet.appendChild($tweetId);
+    $tweet.appendChild($tweetName);
+    $tweet.appendChild($tweetTime);
 
-  return $tweet;
-}
+    return $tweet;
+  }
 
-function createTable (series) {
-  var table = document.createElement('table');
+  function createTable (series) {
+    var table = document.createElement('table');
 
-  var trTitle = document.createElement('tr');
-  var tdDayTitle = document.createElement('td');
-  tdDayTitle.textContent = 'Day';
+    var trTitle = document.createElement('tr');
+    var tdDayTitle = document.createElement('td');
+    tdDayTitle.textContent = 'Day';
 
-  var tdNumTitle = document.createElement('td');
-  tdNumTitle.textContent = 'No. of Tweets';
+    var tdNumTitle = document.createElement('td');
+    tdNumTitle.textContent = 'No. of Tweets';
 
-  trTitle.appendChild(tdDayTitle);
-  trTitle.appendChild(tdNumTitle);
-  table.appendChild(trTitle);
+    trTitle.appendChild(tdDayTitle);
+    trTitle.appendChild(tdNumTitle);
+    table.appendChild(trTitle);
 
-  series.forEach(function (day) {
+    series.forEach(function (day) {
+      var tr = document.createElement('tr');
+      var tdDay = document.createElement('td');
+      var tdNum = document.createElement('td');
+
+      tdDay.textContent = day.day.getDate() + '/' + day.day.getMonth() + '/' + day.day.getFullYear();
+      tdNum.textContent = day.num;
+
+      tr.appendChild(tdDay);
+      tr.appendChild(tdNum);
+      table.appendChild(tr);
+    });
+
     var tr = document.createElement('tr');
-    var tdDay = document.createElement('td');
-    var tdNum = document.createElement('td');
+    var tdTotalTitle = document.createElement('td');
+    tdTotalTitle.textContent = 'Total';
 
-    tdDay.textContent = day.day.getDate() + '/' + day.day.getMonth() + '/' + day.day.getFullYear();
-    tdNum.textContent = day.num;
+    var tdTotal = document.createElement('td');
+    tdTotal.textContent = series.reduce(function (acc, d) { return acc + d.num; }, 0);
 
-    tr.appendChild(tdDay);
-    tr.appendChild(tdNum);
+    tr.appendChild(tdTotalTitle);
+    tr.appendChild(tdTotal);
     table.appendChild(tr);
-  });
 
-  var tr = document.createElement('tr');
-  var tdTotalTitle = document.createElement('td');
-  tdTotalTitle.textContent = 'Total';
-
-  var tdTotal = document.createElement('td');
-  tdTotal.textContent = series.reduce(function (acc, d) { return acc + d.num; }, 0);
-
-  tr.appendChild(tdTotalTitle);
-  tr.appendChild(tdTotal);
-  table.appendChild(tr);
-
-  return table;
-}
+    return table;
+  }
+});
