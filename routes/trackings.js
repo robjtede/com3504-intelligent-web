@@ -59,7 +59,11 @@ function show (req, res) {
     })
     .then(function (searches) {
       search = searches[0];
-      return sql.query('SELECT * FROM tweets WHERE searches_id = ?', [req.params.id]);
+      if (search) {
+        return sql.query('SELECT * FROM tweets WHERE searches_id = ?', [req.params.id]);
+      } else {
+        res.render('404');
+      }
     })
     .then(function (tweets) {
       // Render page
