@@ -16,6 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+var mydb;
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -28,6 +30,7 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
+		myDB = window.sqlitePlugin.openDatabase({name: "mySQLite.db", location: 'default'});
     },
 
     // Update DOM on a Received Event
@@ -42,7 +45,8 @@ var app = {
         console.log('Received Event: ' + id);
 		
 		myDB = window.sqlitePlugin.openDatabase({name: "mySQLite.db", location: 'default'});
-        myDB.transaction(function (transaction) {
+		myDB.transaction(function (transaction) {
+			//transaction.executeSql('DROP TABLE IF EXISTS `tweets`;DROP TABLE IF EXISTS `searches`;');
             transaction.executeSql('CREATE TABLE IF NOT EXISTS `searches` (' +
 			'`id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,' +
 			'`player` TEXT,' +
@@ -52,14 +56,14 @@ var app = {
 			'`mode` VARCHAR(5) NOT NULL DEFAULT \'AND\'' +
 			') DEFAULT CHARSET=utf8mb4;' +
 			'CREATE TABLE IF NOT EXISTS `tweets` (' +
+			'`local_id` BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,' +
 			'`tweet_id` BIGINT(20) NOT NULL,' +
 			'`author` VARCHAR(255) NOT NULL,' +
 			'`datetime` DATETIME NOT NULL,' +
 			'`content` TEXT NOT NULL,' +
 			'`searches_id` INT NOT NULL,' +
 			'FOREIGN KEY(`searches_id`) REFERENCES `searches`(`id`)' +
-			') DEFAULT CHARSET=utf8mb4;' +
-			'CREATE UNIQUE INDEX tweets_uid ON tweets (Tweet_ID);');
+			') DEFAULT CHARSET=utf8mb4;');
         }, function (tx, result) {
                     alert("Table created successfully");
                 },
@@ -82,8 +86,9 @@ var socket = io.connect('http://10.0.2.2:3000');
 
 document.addEventListener('deviceready', function () {
   document.getElementById("defaultOpen").click()
+  socket.emit('getTableSearches');
+  socket.emit('getTableTweets');
   
-
   socket.on('connect', function () {
     console.log('connected', socket.id);
     // Send query
@@ -99,6 +104,7 @@ document.addEventListener('deviceready', function () {
     var tweetsDiv = document.getElementById('tweetList');
     var tweetsCount = document.getElementById('tweetCount');
     var addedTweets = '';
+	
 
     for (var t in data) {
       var tweet = data[t];
@@ -109,6 +115,37 @@ document.addEventListener('deviceready', function () {
 
     tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
 	tweetsCount.textContent = data.length;
+  });
+  
+  socket.on('localCachedTweets', function (id) {
+    console.log('got local cached tweets for: '+ id.id);
+    var tweetsDiv = document.getElementById('tweetList');
+    var tweetsCount = document.getElementById('tweetCount');
+    var addedTweets = '';
+	
+	
+	myDB.transaction(function (transaction) {
+		transaction.executeSql('SELECT * FROM tweets WHERE search_id = ?', [id.id], function(data){
+			
+			console.log('data' + data);
+			
+			for (var t in data) {
+				var tweet = data[t];
+
+				addedTweets += '<p> LOCAL CACHED RESULT:</p>';
+				addedTweets += makeTweetDiv(tweet);
+			}
+
+			tweetsDiv.innerHTML = addedTweets + tweetsDiv.innerHTML;
+			tweetsCount.textContent = data.length;
+			
+		});
+		}, function (tx, result) {
+				
+		},
+		function (error) {
+			console.log("Error occurred grabbing tweets");
+		});
   });
 
   // Got socket of tweets from get/search
@@ -215,6 +252,33 @@ document.addEventListener('deviceready', function () {
       }
     });
   });
+  
+  socket.on('tableSearches', function(results){
+		console.log('Sync searches');
+		for(i in results){
+			var sqlQuery = 'INSERT INTO searches (?,?,?,?,?)'
+			myDB.transaction(function (transaction) {
+			transaction.executeSql(sqlQuery,[results[i].terms_player, results[i].terms_team, results[i].terms_author, results[i].search_mode, results[i].newest_stored_tweet]);
+			});
+		}
+  });
+  
+  socket.on('tableTweets', function (results){
+	  console.log('Sync tweets');
+	  for(i in results){
+			var sqlQuery = 'INSERT INTO tweets (?,?,?,?,?)';
+			myDB.transaction(function (transaction) {
+			transaction.executeSql(sqlQuery,[results[i].tweet_id, results[i].author, results[i].datetime, results[i].content, results[i].searchesID]);
+			}, function (tx, result) {
+                    
+                },
+                function (error) {
+                    console.log("Error occurred grabbing tweets");
+                });
+		
+		}
+  
+	});
 });
 
 // Prepare a tweet div
@@ -225,6 +289,7 @@ function makeTweetDiv (tweet) {
         '<p>' + tweet.author + '</p>' +
           '<p>' + tweet.content + '</p>' +
             '</div>';
+	
   return newDiv;
 }
 
@@ -269,7 +334,9 @@ function openTab(evt, TabName) {
 }
 
 function openResults(id) {
+	console.log('opening: '+ id);
 	document.getElementById('tweetList').innerHTML = '';
+	//socket.emit('getlocalCachedTweets', {id: id});
 	socket.emit('join', {
         trackingId: id
     });

@@ -155,6 +155,31 @@ module.exports = function (io) {
           }
         });
     });
+	
+		
+	socket.on('getTableSearches', function (){
+		sql.getSearchesTable().then(function(results){
+			if(results) {
+				socket.emit('tableSearches', results);
+			}
+			
+		});
+	});
+	
+	socket.on('getTableTweets', function (){
+		sql.getTweetsTable().then(function(results){
+			if(results) {
+				socket.emit('tableTweets', results);
+			}
+		});
+		
+	});
+	
+	socket.on('getlocalCachedTweets', function(id){
+		console.log('getlocal');
+		socket.emit('localCachedTweets', id);
+	});
+	
   });
 };
 
@@ -166,3 +191,6 @@ function groupTweet (days, tweet) {
 
   return days;
 }
+
+
+
